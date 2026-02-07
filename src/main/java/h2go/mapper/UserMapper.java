@@ -12,16 +12,15 @@ import java.util.List;
 @Mapper(componentModel = "spring", imports = Role.class)
 public interface UserMapper {
 
-    @Mapping(target = "passwordHash", expression = "java(passwordEncoder.encode(dto.password()))")
-    @Mapping(target = "role", expression = "java(Role.valueOf(dto.role()))")
-    @Mapping(target = "enabled", constant = "true")
-    @Mapping(target = "deletedAt", ignore = true)
-    @Mapping(target = "id", ignore = true)
-    User toEntity(UserCreationDTO dto, @Context PasswordEncoder passwordEncoder);
+  @Mapping(target = "passwordHash", expression = "java(passwordEncoder.encode(dto.password()))")
+  @Mapping(target = "role", expression = "java(Role.valueOf(dto.role()))")
+  @Mapping(target = "enabled", constant = "true")
+  @Mapping(target = "deletedAt", ignore = true)
+  @Mapping(target = "id", ignore = true)
+  User toEntity(UserCreationDTO dto, @Context PasswordEncoder passwordEncoder);
 
-    UserRetrievalDTO toDto(User user);
+  UserRetrievalDTO toDto(User user);
 
-    List<UserRetrievalDTO> toDtoList(List<User> users);
-
+  List<UserRetrievalDTO> toDtoList(List<User> users);
 
 }
