@@ -4,7 +4,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import h2go.config.JwtUtil;
@@ -26,25 +25,15 @@ public class AuthService {
   }
 
   public String login(LoginDTO userDTO) {
-    log.info("Starting login process for email: {}", userDTO.email());
-    log.debug("Password provided: [PROTECTED]");
-    
+
     try {
       UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
           userDTO.email(), userDTO.password());
-      log.info("Created UsernamePasswordAuthenticationToken for authentication");
-      
-      log.info("Calling AuthenticationManager.authenticate()");
+
       Authentication authentication = authenticationManager.authenticate(authToken);
-      log.info("Authentication successful for user: {}", userDTO.email());
-      
       final UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-      log.info("Retrieved UserDetails for user: {}", userDetails.getUsername());
-      
-      String jwtToken = jwtUtil.generateToken(userDetails.getUsername());
-      log.info("Generated JWT token for user: {}", userDetails.getUsername());
-      
-      return jwtToken;
+        return jwtUtil.generateToken(userDetails.getUsername());
+
     } catch (Exception e) {
       log.error("Authentication failed for user: {} with error: {}", userDTO.email(), e.getMessage());
       log.error("Exception details:", e);

@@ -1,8 +1,8 @@
 package h2go.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,18 +14,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import h2go.service.CustomUserDetailsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
   private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
+  private final AuthTokenFilter authTokenFilter;
+  private final AuthEntryPoint authEntryPoint;
 
   @Bean
-  public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+  public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration){
     log.info("Configuring AuthenticationManager");
     AuthenticationManager authManager = authenticationConfiguration.getAuthenticationManager();
     log.info("AuthenticationManager configured successfully");
@@ -33,8 +35,7 @@ public class SecurityConfig {
   }
 
   @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity http, @Lazy AuthTokenFilter authTokenFilter,
-      @Lazy AuthEntryPoint authEntryPoint) throws Exception {
+  public SecurityFilterChain securityFilterChain(HttpSecurity http){
 
     log.info("Configuring SecurityFilterChain");
     
