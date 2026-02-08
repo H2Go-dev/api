@@ -31,4 +31,17 @@ public class UserService {
     User user = userMapper.toEntity(userCreationDTO, passwordEncoder);
     userRepository.save(user);
   }
+
+  public UserRetrievalDTO getUserById(String id) {
+    User user = userRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+    return userMapper.toDto(user);
+  }
+
+  public void deleteUser(String id) {
+    if (!userRepository.existsById(id)) {
+      throw new RuntimeException("User not found with id: " + id);
+    }
+    userRepository.deleteById(id);
+  }
 }

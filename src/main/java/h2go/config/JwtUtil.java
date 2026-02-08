@@ -1,11 +1,14 @@
 package h2go.config;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.Date;
 
 import javax.crypto.SecretKey;
 
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Jwts;

@@ -1,5 +1,6 @@
 package h2go.config;
 
+import h2go.model.User;
 import h2go.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -14,10 +15,16 @@ public class ApplicationConfiguration {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("user not found"));
-
-
+        return username -> {
+            User user = userRepository.findByEmail(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("user not found"));
+            
+            return new org.springframework.security.core.userdetails.User(
+                    user.getEmail(),
+                    user.getPasswordHash(),
+                    user.getAuthorities()
+            );
+        };
     }
 }
 

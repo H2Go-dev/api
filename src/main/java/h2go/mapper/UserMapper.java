@@ -17,6 +17,7 @@ public interface UserMapper {
   @Mapping(target = "enabled", constant = "true")
   @Mapping(target = "deletedAt", ignore = true)
   @Mapping(target = "id", ignore = true)
+  @Mapping(target = "authorities", ignore = true)
   User toEntity(UserCreationDTO dto, @Context PasswordEncoder passwordEncoder);
 
   UserRetrievalDTO toDto(User user);

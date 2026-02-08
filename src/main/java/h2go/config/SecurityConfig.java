@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -19,35 +21,38 @@ import org.slf4j.LoggerFactory;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
   private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
   private final AuthTokenFilter authTokenFilter;
   private final AuthEntryPoint authEntryPoint;
+  private final CustomAccessDeniedHandler accessDeniedHandler;
 
   @Bean
   public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration){
-    log.info("Configuring AuthenticationManager");
     AuthenticationManager authManager = authenticationConfiguration.getAuthenticationManager();
     log.info("AuthenticationManager configured successfully");
     return authManager;
   }
 
   @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity http){
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-    log.info("Configuring SecurityFilterChain");
-    
     http
         .csrf(AbstractHttpConfigurer::disable)
         .cors(AbstractHttpConfigurer::disable)
-        .exceptionHandling(e -> e.authenticationEntryPoint(authEntryPoint))
-        .sessionManagement(
-            s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authorizeHttpRequests(
-            request -> request.requestMatchers("/api/auth/**", "/actuator/**").permitAll()
-                .anyRequest().authenticated());
+        .exceptionHandling(e -> e
+            .authenticationEntryPoint(authEntryPoint)
+            .accessDeniedHandler(accessDeniedHandler))
+        .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .authorizeHttpRequests(request -> request
+            .requestMatchers("/api/auth/**", "/actuator/health").permitAll()
+            .requestMatchers("/api/users").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.POST, "/api/users").hasRole("ADMIN")
+            .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasRole("ADMIN")
+            .anyRequest().authenticated());
 
     http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
     
