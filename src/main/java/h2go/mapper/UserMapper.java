@@ -13,7 +13,7 @@ import java.util.List;
 public interface UserMapper {
 
   @Mapping(target = "passwordHash", expression = "java(passwordEncoder.encode(dto.password()))")
-  @Mapping(target = "role", expression = "java(Role.valueOf(dto.role()))")
+  @Mapping(target = "role", expression = "java(Role.USER)")
   @Mapping(target = "enabled", constant = "true")
   @Mapping(target = "deletedAt", ignore = true)
   @Mapping(target = "id", ignore = true)

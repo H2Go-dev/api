@@ -2,6 +2,7 @@ package h2go.config;
 
 import java.io.IOException;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import org.jspecify.annotations.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -58,6 +59,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
       }
+    } catch (ExpiredJwtException e) {
+      log.error("JWT token expired: {}", e.getMessage());
+      throw e;
     } catch (Exception e) {
       log.error("Cannot set user authentication: {}", e.getMessage());
     }

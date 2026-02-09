@@ -6,6 +6,7 @@ import java.util.Date;
 
 import javax.crypto.SecretKey;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
@@ -62,6 +63,9 @@ public class JwtUtil {
       Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token);
       log.debug("JWT token validation successful");
       return true;
+    } catch (ExpiredJwtException e) {
+      log.error("Jwt expired, exception message: ", e);
+      throw e;
     } catch (Exception e) {
       log.error("JWT Validation Error: {}", e.getMessage());
       log.error("Validation exception details:", e);

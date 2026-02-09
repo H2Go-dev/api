@@ -33,7 +33,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("#id == authentication.principal.id or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public UserRetrievalDTO getUserById(@PathVariable("id") String id){
         return userService.getUserById(id);
     }

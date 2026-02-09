@@ -2,7 +2,10 @@ package h2go.exception;
 
 import h2go.dto.ErrorResponse;
 import h2go.dto.FieldError;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -66,6 +69,63 @@ public class GlobalExceptionHandler {
                LocalDateTime.now()
        );
        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
+
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<ErrorResponse> handleJwtExpiryException(ExpiredJwtException ex, WebRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.UNAUTHORIZED.value(),
+                "Your jwt token got expired login again",
+                List.of(new FieldError("credentials", ex.getMessage(), null)),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
+
+
+    @ExceptionHandler(ApiException.class)
+    public ResponseEntity<ErrorResponse> handleApiException(
+            ApiException ex, WebRequest request) {
+
+        ErrorResponse errorResponse = new ErrorResponse(
+            ex.getStatus().value(),
+            ex.getMessage(),
+            List.of(new FieldError("api", ex.getMessage(), null)),
+            LocalDateTime.now()
+        );
+        return new ResponseEntity<>(errorResponse, ex.getStatus());
+    }
+
+    @ExceptionHandler(EmptyResultDataAccessException.class)
+    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(
+            org.springframework.dao.EmptyResultDataAccessException ex, WebRequest request) {
+
+        ErrorResponse errorResponse = new ErrorResponse(
+            HttpStatus.NOT_FOUND.value(),
+            "Resource not found",
+            List.of(new FieldError("resource", ex.getMessage(), null)),
+            LocalDateTime.now()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateResourceException(
+            org.springframework.dao.DataIntegrityViolationException ex, WebRequest request) {
+
+        String message = "Resource already exists";
+        if (ex.getMessage() != null && ex.getMessage().contains("email")) {
+            message = "Email already exists";
+        }
+
+        ErrorResponse errorResponse = new ErrorResponse(
+            HttpStatus.CONFLICT.value(),
+            message,
+            List.of(new FieldError("resource", ex.getMessage(), null)),
+            LocalDateTime.now()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(Exception.class)
