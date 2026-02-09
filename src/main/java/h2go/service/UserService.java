@@ -5,6 +5,7 @@ import h2go.dto.UserRetrievalDTO;
 import h2go.mapper.UserMapper;
 import h2go.model.User;
 import h2go.repository.UserRepository;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -43,5 +44,12 @@ public class UserService {
       throw new RuntimeException("User not found with id: " + id);
     }
     userRepository.deleteById(id);
+  }
+
+  public UserRetrievalDTO getUserProfile(String email) {
+    User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+    // TODO: to add the order details and history when orders are implemented
+    return userMapper.toDto(user);
+
   }
 }
