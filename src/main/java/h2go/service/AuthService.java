@@ -16,9 +16,10 @@ public class AuthService {
   private static final Logger log = LoggerFactory.getLogger(AuthService.class);
   
   private final AuthenticationManager authenticationManager;
+
   private final JwtUtil jwtUtil;
 
-  public AuthService(AuthenticationManager authenticationManager, JwtUtil jwtUtil){
+  public AuthService(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
     this.authenticationManager = authenticationManager;
     this.jwtUtil = jwtUtil;
     log.info("AuthService initialized with AuthenticationManager and JwtUtil");

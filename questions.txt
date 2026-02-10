@@ -1,0 +1,3 @@
+1. when I try to throw an exception from the verification in the userdetials service it gets caught by a built in class
+    and the exception I've thrown doesn't reach the global exception handler so the status code is wrong it returns
+    500 and it should return 404 or 401 I think

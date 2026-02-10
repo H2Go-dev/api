@@ -1,12 +1,14 @@
 package h2go.exception;
 
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+@Getter
 public class ApiException extends RuntimeException {
-    
+
     private final HttpStatus status;
-    
-    public ApiException(String message) {
+
+    public ApiException(final String message) {
         this(message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
     
@@ -23,8 +25,5 @@ public class ApiException extends RuntimeException {
         super(message, cause);
         this.status = status;
     }
-    
-    public HttpStatus getStatus() {
-        return status;
-    }
+
 }

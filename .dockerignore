@@ -1,0 +1,22 @@
+# Docker ignore file
+.git
+.gitignore
+README.md
+Dockerfile
+.dockerignore
+docker-compose.yml
+docker-compose.override.yml
+.env
+.env.*
+target/
+*.jar
+*.war
+*.ear
+*.class
+*.log
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

@@ -25,11 +25,13 @@ import org.slf4j.LoggerFactory;
 public class SecurityConfig {
 
   private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
+
   private final AuthTokenFilter authTokenFilter;
+
   private final AuthEntryPoint authEntryPoint;
 
   @Bean
-  public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration){
+  public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) {
     AuthenticationManager authManager = authenticationConfiguration.getAuthenticationManager();
     log.info("AuthenticationManager configured successfully");
     return authManager;

@@ -1,14 +1,11 @@
 package h2go.controller;
 
-import h2go.config.JwtUtil;
 import h2go.dto.LoginDTO;
 import h2go.dto.UserCreationDTO;
 import h2go.service.AuthService;
 import h2go.service.UserService;
 import jakarta.validation.Valid;
 
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +19,7 @@ public class AuthController {
   private static final Logger log = LoggerFactory.getLogger(AuthController.class);
   
   private final UserService userService;
+
   private final AuthService authService;
 
   public AuthController(UserService userService, AuthService authService) {

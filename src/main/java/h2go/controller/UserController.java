@@ -16,36 +16,36 @@ import java.util.List;
 public class UserController {
     public final UserService userService;
 
-    public UserController(UserService userService){
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public List<UserRetrievalDTO> getAllUsers(){
+    public List<UserRetrievalDTO> getAllUsers() {
         return userService.getAllUsers();
     }
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public void createUser(@Valid @RequestBody UserCreationDTO userCreationDTO){
+    public void createUser(@Valid @RequestBody UserCreationDTO userCreationDTO) {
         userService.createUser(userCreationDTO);
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public UserRetrievalDTO getUserById(@PathVariable("id") String id){
+    public UserRetrievalDTO getUserById(@PathVariable("id") String id) {
         return userService.getUserById(id);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public void deleteUser(@PathVariable("id") String id){
+    public void deleteUser(@PathVariable("id") String id) {
         userService.deleteUser(id);
     }
 
     @GetMapping("/profile")
-    public UserRetrievalDTO profile(@AuthenticationPrincipal UserDetails userDetails){
+    public UserRetrievalDTO profile(@AuthenticationPrincipal UserDetails userDetails) {
         return userService.getUserProfile(userDetails.getUsername());
     }
 

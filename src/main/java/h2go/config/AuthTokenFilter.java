@@ -1,6 +1,7 @@
 package h2go.config;
 
 import java.io.IOException;
+import java.util.List;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import org.jspecify.annotations.NonNull;
@@ -25,12 +26,21 @@ public class AuthTokenFilter extends OncePerRequestFilter {
   private static final Logger log = LoggerFactory.getLogger(AuthTokenFilter.class);
   
   public static final String BEARER_ = "Bearer ";
+
   private final JwtUtil jwtUtil;
+
   private final UserDetailsService userDetailsService;
 
   public AuthTokenFilter(JwtUtil jwtUtil, UserDetailsService userDetailsService) {
     this.jwtUtil = jwtUtil;
     this.userDetailsService = userDetailsService;
+  }
+
+  @Override
+  protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+    String path = request.getServletPath();
+    List<String> skipPaths = List.of("/api/auth/login", "/api/auth/register", "/actuator/health");
+    return skipPaths.contains(path);
   }
 
   @Override
@@ -47,7 +57,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         return;
       }
 
-      if(jwtUtil.validateJwtToken(jwt)) {
+      if (jwtUtil.validateJwtToken(jwt)) {
         final String username = jwtUtil.getUserFromToken(jwt);
         final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
