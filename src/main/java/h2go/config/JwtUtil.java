@@ -38,7 +38,7 @@ public class JwtUtil {
     String token = Jwts.builder()
         .subject(username)
         .issuedAt(new Date())
-        .expiration(new Date((new Date()).getTime() + jwtExpiration))
+        .expiration(new Date(new Date().getTime() + jwtExpiration))
         .signWith(secretKey)
         .compact();
 

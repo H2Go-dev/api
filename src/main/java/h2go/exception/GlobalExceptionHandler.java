@@ -100,7 +100,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleDuplicateResourceException(
-            org.springframework.dao.DataIntegrityViolationException ex, WebRequest request) {
+            DataIntegrityViolationException ex, WebRequest request) {
 
         String message = "Resource already exists";
         if (ex.getMessage() != null && ex.getMessage().contains("email")) {
