@@ -26,7 +26,7 @@ services:
       POSTGRES_PASSWORD: h2go-test-password
       POSTGRES_DB: h2go-test-db
       SPRING_PROFILES_ACTIVE: test
-      JWT_SECRET: test
+      JWT_SECRET: adfjklskdjfklsdjfklsdfjlkfwhelfjwelewcnweionsjdlfksdflkjsdkljflasjoi23jo23j32lojf23ilj23fij23flj23ljf2li3j3lij2li3jfli32jfli32jl
       SPRING_SECURITY_USER_PASSWORD: test-admin-password
     ports:
       - "8081:8080"

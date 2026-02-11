@@ -28,6 +28,9 @@ clean:
 style-check:
 	./mvnw checkstyle:check
 
+run-db:
+	docker compose up postgres -d
+
 docker-build:
 	docker build -t h2go:latest .
 
@@ -38,6 +41,7 @@ docker-stop:
 	docker-compose down
 
 smoke-test: docker-build
+	docker compose down
 	@echo "Starting services for smoke testing..."
 	docker-compose -f docker-compose.test.yml up -d
 	@echo "Waiting for services to be healthy..."

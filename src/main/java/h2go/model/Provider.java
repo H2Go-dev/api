@@ -1,6 +1,6 @@
 package h2go.model;
 
-import h2go.model.enums.RegisterationStatus;
+import h2go.model.enums.RegistrationStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,7 +28,7 @@ public class Provider {
     private String serviceCity;
 
     @Enumerated(EnumType.STRING)
-    private RegisterationStatus registerationStatus;
+    private RegistrationStatus registrationStatus;
 
     private LocalDateTime deletedAt;
 }

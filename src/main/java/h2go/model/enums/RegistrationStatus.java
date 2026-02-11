@@ -1,6 +1,6 @@
 package h2go.model.enums;
 
-public enum RegisterationStatus {
+public enum RegistrationStatus {
     PENDING,
     APPROVED,
     REJECTED
