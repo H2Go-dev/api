@@ -1,6 +1,6 @@
 package h2go.exception;
 
-import h2go.dto.ErrorResponse;
+import h2go.dto.response.ErrorResponse;
 import h2go.dto.FieldError;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;

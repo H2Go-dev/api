@@ -1,4 +1,4 @@
-package h2go.dto;
+package h2go.dto.request;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public record UserCreationDTO(
+public record UserRegistrationRequest(
         @NotBlank(message = "Name is required")
         @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
         @Column(nullable = false)

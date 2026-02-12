@@ -1,17 +1,16 @@
-package h2go.dto;
+package h2go.dto.response;
 
+import h2go.dto.request.UserRetrievalRequest;
 import h2go.model.enums.RegistrationStatus;
 
 import java.time.LocalDateTime;
 
-public record ProviderRetrievalDTO(
+public record ProviderRetrievalResponse(
         String id,
-        UserRetrievalDTO user,
+        UserRetrievalRequest user,
         String businessName,
         String serviceCity,
         RegistrationStatus registrationStatus,
-
         LocalDateTime deletedAt
-
 ) {
 }

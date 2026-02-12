@@ -1,6 +1,7 @@
 package h2go.service;
 
 import h2go.exception.ApiException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -9,11 +10,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import h2go.config.JwtUtil;
-import h2go.dto.LoginDTO;
+import h2go.dto.request.LoginRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
   private static final Logger log = LoggerFactory.getLogger(AuthService.class);
   
@@ -21,12 +23,7 @@ public class AuthService {
 
   private final JwtUtil jwtUtil;
 
-  public AuthService(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
-    this.authenticationManager = authenticationManager;
-    this.jwtUtil = jwtUtil;
-  }
-
-  public String login(LoginDTO userDTO) {
+  public String login(LoginRequest userDTO) {
 
       UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
           userDTO.email(), userDTO.password());

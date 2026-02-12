@@ -1,6 +1,6 @@
 package h2go.service;
 
-import h2go.dto.ProviderRegistrationDTO;
+import h2go.dto.request.ProviderRegistrationRequest;
 import h2go.mapper.ProviderMapper;
 import h2go.mapper.UserMapper;
 import h2go.model.Provider;
@@ -24,7 +24,7 @@ public class ProviderService {
 
     private final UserMapper userMapper;
 
-    public void register(@Valid ProviderRegistrationDTO providerDTO) {
+    public void register(@Valid ProviderRegistrationRequest providerDTO) {
         Provider provider = providerMapper.toEntity(providerDTO.provider());
         User user = userMapper.toEntity(providerDTO.user(), passwordEncoder);
 

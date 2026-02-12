@@ -1,4 +1,4 @@
-package h2go.dto;
+package h2go.dto.request;
 
 import h2go.model.enums.Role;
 import jakarta.validation.constraints.Email;
@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Pattern;
 
 import java.time.LocalDateTime;
 
-public record UserRetrievalDTO(
+public record UserRetrievalRequest(
         String id,
         String name,
         @Email(message = "Invalid email format")

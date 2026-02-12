@@ -1,0 +1,12 @@
+package h2go.dto.request;
+
+import h2go.dto.ProviderCreationDTO;
+import jakarta.validation.constraints.NotNull;
+
+public record ProviderRegistrationRequest(
+        @NotNull
+        UserRegistrationRequest user,
+        @NotNull
+        ProviderCreationDTO provider
+) {
+}

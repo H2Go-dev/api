@@ -1,7 +1,7 @@
 package h2go.mapper;
 
 import h2go.dto.ProviderCreationDTO;
-import h2go.dto.ProviderRetrievalDTO;
+import h2go.dto.response.ProviderRetrievalResponse;
 import h2go.model.enums.RegistrationStatus;
 import h2go.model.Provider;
 import org.mapstruct.Mapper;
@@ -19,8 +19,8 @@ public interface ProviderMapper {
     Provider toEntity(ProviderCreationDTO providerCreationDTO);
 
 
-    ProviderRetrievalDTO toDto(Provider provider);
+    ProviderRetrievalResponse toDto(Provider provider);
 
-    List<ProviderRetrievalDTO> toDtoList(List<Provider> providers);
+    List<ProviderRetrievalResponse> toDtoList(List<Provider> providers);
 
 }

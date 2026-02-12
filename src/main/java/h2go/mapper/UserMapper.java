@@ -1,7 +1,7 @@
 package h2go.mapper;
 
-import h2go.dto.UserCreationDTO;
-import h2go.dto.UserRetrievalDTO;
+import h2go.dto.request.UserRegistrationRequest;
+import h2go.dto.request.UserRetrievalRequest;
 import h2go.model.User;
 import h2go.model.enums.Role;
 import org.mapstruct.Context;
@@ -20,10 +20,10 @@ public interface UserMapper {
     @Mapping(target = "deletedAt", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "authorities", ignore = true)
-    User toEntity(UserCreationDTO dto, @Context PasswordEncoder passwordEncoder);
+    User toEntity(UserRegistrationRequest dto, @Context PasswordEncoder passwordEncoder);
 
-    UserRetrievalDTO toDto(User user);
+    UserRetrievalRequest toDto(User user);
 
-    List<UserRetrievalDTO> toDtoList(List<User> users);
+    List<UserRetrievalRequest> toDtoList(List<User> users);
 
 }

@@ -1,4 +1,6 @@
-package h2go.dto;
+package h2go.dto.response;
+
+import h2go.dto.FieldError;
 
 import java.time.LocalDateTime;
 import java.util.List;

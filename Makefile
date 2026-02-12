@@ -27,6 +27,7 @@ clean:
 
 style-check:
 	./mvnw checkstyle:check
+	./mvnw pmd:check pmd:cpd-check
 
 run-db:
 	docker compose up postgres -d
