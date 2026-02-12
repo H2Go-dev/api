@@ -1,6 +1,6 @@
 package h2go.mapper;
 
-import h2go.dto.ProviderCreationDTO;
+import h2go.dto.request.ProviderCreationDTO;
 import h2go.dto.response.ProviderRetrievalResponse;
 import h2go.model.enums.RegistrationStatus;
 import h2go.model.Provider;

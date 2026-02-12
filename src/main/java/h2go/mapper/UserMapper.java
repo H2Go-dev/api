@@ -1,12 +1,13 @@
 package h2go.mapper;
 
 import h2go.dto.request.UserRegistrationRequest;
-import h2go.dto.request.UserRetrievalRequest;
+import h2go.dto.response.UserRetrievalResponse;
 import h2go.model.User;
 import h2go.model.enums.Role;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
@@ -22,8 +23,14 @@ public interface UserMapper {
     @Mapping(target = "authorities", ignore = true)
     User toEntity(UserRegistrationRequest dto, @Context PasswordEncoder passwordEncoder);
 
-    UserRetrievalRequest toDto(User user);
+    UserRetrievalResponse toDto(User user);
 
-    List<UserRetrievalRequest> toDtoList(List<User> users);
+    List<UserRetrievalResponse> toDtoList(List<User> users);
 
+    @Mapping(target = "id", ignore = true)
+    void updateEntityFromDto(
+            UserRegistrationRequest dto,
+            @MappingTarget User entity,
+            PasswordEncoder passwordEncoder
+    );
 }

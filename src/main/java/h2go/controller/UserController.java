@@ -1,7 +1,7 @@
 package h2go.controller;
 
 import h2go.dto.request.UserRegistrationRequest;
-import h2go.dto.request.UserRetrievalRequest;
+import h2go.dto.response.UserRetrievalResponse;
 import h2go.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,18 +21,22 @@ public class UserController {
     public final UserService userService;
 
     @GetMapping
-    public List<UserRetrievalRequest> getAllUsers(@RequestParam(defaultValue = "false") Boolean deleted) {
+    public List<UserRetrievalResponse> getAllUsers(@RequestParam(defaultValue = "false") Boolean deleted) {
         return userService.getAllUsers(deleted);
     }
 
     @PostMapping
-    public ResponseEntity<Object> createUser(@Valid @RequestBody UserRegistrationRequest userRegistrationRequest) {
-        userService.createUser(userRegistrationRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<UserRetrievalResponse> createUser(
+            @Valid
+            @RequestBody
+            UserRegistrationRequest userRegistrationRequest
+    ) {
+        UserRetrievalResponse userRetrievalResponse = userService.createUser(userRegistrationRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userRetrievalResponse);
     }
 
     @GetMapping("/{id}")
-    public UserRetrievalRequest getUserById(@PathVariable("id") String id) {
+    public UserRetrievalResponse getUserById(@PathVariable("id") String id) {
         return userService.getUserById(id);
     }
 
@@ -42,8 +46,19 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    public UserRetrievalRequest profile(@AuthenticationPrincipal UserDetails userDetails) {
+    public UserRetrievalResponse profile(@AuthenticationPrincipal UserDetails userDetails) {
         return userService.getUserProfile(userDetails.getUsername());
+    }
+
+    @PutMapping()
+    public UserRetrievalResponse updateUser(
+            @AuthenticationPrincipal
+            UserDetails userDetails,
+            @Valid
+            @RequestBody
+            UserRegistrationRequest userRegistrationRequest
+    ) {
+        return userService.updateUser(userDetails.getUsername(), userRegistrationRequest);
     }
 
 }

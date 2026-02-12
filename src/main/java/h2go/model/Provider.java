@@ -32,9 +32,6 @@ public class Provider {
 
     private LocalDateTime deletedAt;
 
-
-
-
     public boolean isDeleted() {
         return this.deletedAt != null;
     }
