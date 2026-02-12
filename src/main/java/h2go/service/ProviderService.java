@@ -11,11 +11,12 @@ import h2go.model.enums.Role;
 import h2go.repository.ProviderRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -41,9 +42,8 @@ public class ProviderService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public List<ProviderRetrievalResponse> getProviders() {
-        List<ProviderRetrievalResponse> providers = providerMapper.toDtoList(providerRepository.findAll());
-        // TODO: add filters and other stuff
-        return providers;
+    public Page<ProviderRetrievalResponse> getProviders(Integer page, Integer size) {
+        return providerRepository.findAllByDeletedAtIsNullOrderByIdAsc(PageRequest.of(page, size))
+                .map(providerMapper::toDto);
     }
 }

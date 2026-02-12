@@ -9,12 +9,13 @@ import h2go.model.User;
 import h2go.repository.ProviderRepository;
 import h2go.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -31,11 +32,9 @@ public class UserService {
 
 
     @PreAuthorize("hasRole('ADMIN')")
-    public List<UserRetrievalResponse> getAllUsers(Boolean deleted) {
-        if (!deleted) {
-            return userMapper.toDtoList(userRepository.findByDeletedAtIsNull());
-        }
-        return userMapper.toDtoList(userRepository.findAll());
+    public Page<UserRetrievalResponse> getAllUsers(Integer page, Integer size) {
+        Page<User> users = userRepository.findAllByDeletedAtIsNullOrderByIdAsc(PageRequest.of(page, size));
+        return users.map(userMapper::toDto);
     }
 
     public UserRetrievalResponse createUser(UserRegistrationRequest userRegistrationRequest) {
@@ -75,7 +74,6 @@ public class UserService {
   public UserRetrievalResponse getUserProfile(String email) {
     User user = userRepository.findByEmailAndDeletedAtIsNull(email).orElseThrow(
             () -> new ApiException("User not found with email: " + email, HttpStatus.NOT_FOUND));
-
     // TODO: to add the order details and history when orders are implemented
     return userMapper.toDto(user);
   }

@@ -5,13 +5,13 @@ import h2go.dto.response.UserRetrievalResponse;
 import h2go.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -21,8 +21,13 @@ public class UserController {
     public final UserService userService;
 
     @GetMapping
-    public List<UserRetrievalResponse> getAllUsers(@RequestParam(defaultValue = "false") Boolean deleted) {
-        return userService.getAllUsers(deleted);
+    public Page<UserRetrievalResponse> getAllUsers(
+            @RequestParam(defaultValue = "0")
+            Integer page,
+            @RequestParam(defaultValue = "20")
+            Integer size
+    ) {
+        return userService.getAllUsers(page, size);
     }
 
     @PostMapping
