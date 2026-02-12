@@ -1,7 +1,7 @@
 package h2go.exception;
 
 import h2go.dto.response.ErrorResponse;
-import h2go.dto.FieldError;
+import h2go.dto.response.FieldError;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;

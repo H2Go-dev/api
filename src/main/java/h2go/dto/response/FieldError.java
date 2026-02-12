@@ -1,4 +1,4 @@
-package h2go.dto;
+package h2go.dto.response;
 
 public record FieldError(
     String field,
