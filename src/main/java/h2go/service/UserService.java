@@ -8,6 +8,7 @@ import h2go.model.Provider;
 import h2go.model.User;
 import h2go.repository.ProviderRepository;
 import h2go.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,13 +34,16 @@ public class UserService {
 
     @PreAuthorize("hasRole('ADMIN')")
     public Page<UserRetrievalResponse> getAllUsers(Integer page, Integer size) {
+        if (page == null || size == null || size <= 0 || page <= 0 || size > 100) {
+            throw new ApiException("invalid page or size parameter", HttpStatus.BAD_REQUEST);
+        }
         Page<User> users = userRepository.findAllByDeletedAtIsNullOrderByIdAsc(PageRequest.of(page, size));
         return users.map(userMapper::toDto);
     }
 
     public UserRetrievalResponse createUser(UserRegistrationRequest userRegistrationRequest) {
         if (userRepository.findByEmail(userRegistrationRequest.email()).isPresent()) {
-            throw new ApiException("Email already exists: " + userRegistrationRequest.email(), HttpStatus.CONFLICT);
+            throw new ApiException("A user with this email already exists", HttpStatus.CONFLICT);
         }
     
         User user = userMapper.toEntity(userRegistrationRequest, passwordEncoder);
@@ -49,15 +53,16 @@ public class UserService {
     @PreAuthorize("hasRole('ADMIN')")
     public UserRetrievalResponse getUserById(String id) {
         User user = userRepository.findByIdAndDeletedAtIsNull(id)
-        .orElseThrow(() -> new ApiException("User not found with id: " + id, HttpStatus.NOT_FOUND));
+        .orElseThrow(() -> new ApiException("User not found", HttpStatus.NOT_FOUND));
 
         return userMapper.toDto(user);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
     public void deleteUser(String id) {
         User user = userRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(
-            () -> new ApiException("User not found with id: " + id, HttpStatus.NOT_FOUND));
+            () -> new ApiException("User not found", HttpStatus.NOT_FOUND));
 
         user.softDelete();
 
@@ -73,16 +78,22 @@ public class UserService {
 
   public UserRetrievalResponse getUserProfile(String email) {
     User user = userRepository.findByEmailAndDeletedAtIsNull(email).orElseThrow(
-            () -> new ApiException("User not found with email: " + email, HttpStatus.NOT_FOUND));
+            () -> new ApiException("User not found", HttpStatus.NOT_FOUND));
     // TODO: to add the order details and history when orders are implemented
     return userMapper.toDto(user);
   }
 
     public UserRetrievalResponse updateUser(String email, UserRegistrationRequest userRegistrationRequest) {
         User user = userRepository.findByEmailAndDeletedAtIsNull(email)
-                .orElseThrow(() -> new ApiException("User not found", HttpStatus.UNAUTHORIZED));
+                .orElseThrow(() -> new ApiException("User not found", HttpStatus.NOT_FOUND));
 
-        userMapper.updateEntityFromDto(userRegistrationRequest, user,  passwordEncoder);
+        if (!user.getEmail().equals(userRegistrationRequest.email())) {
+            if (userRepository.findByEmail(userRegistrationRequest.email()).isPresent()) {
+                throw new ApiException("A user with this email already exists", HttpStatus.CONFLICT);
+            }
+        }
+
+        userMapper.updateEntityFromDto(userRegistrationRequest, user, passwordEncoder);
         return userMapper.toDto(userRepository.save(user));
     }
 }

@@ -16,17 +16,15 @@ public class AdminService {
 
     private final ProviderRepository providerRepository;
 
-
     public void approveProvider(String id, boolean approve) {
         Provider provider = providerRepository.findByIdAndDeletedAtIsNull(id)
-                        . orElseThrow(() -> new ApiException("provider not found", HttpStatus.NOT_FOUND));
+                        . orElseThrow(() -> new ApiException("Provider not found", HttpStatus.NOT_FOUND));
 
-
-        if (approve) {
-            provider.setRegistrationStatus(RegistrationStatus.APPROVED);
-        } else  {
-            provider.setRegistrationStatus(RegistrationStatus.REJECTED);
+        if (!provider.getRegistrationStatus().equals(RegistrationStatus.PENDING)) {
+            throw  new ApiException("Provider is already processed", HttpStatus.CONFLICT);
         }
+
+        provider.setRegistrationStatus(approve? RegistrationStatus.APPROVED: RegistrationStatus.REJECTED);
 
         providerRepository.save(provider);
     }
