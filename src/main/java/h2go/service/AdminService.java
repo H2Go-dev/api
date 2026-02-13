@@ -24,7 +24,7 @@ public class AdminService {
             throw  new ApiException("Provider is already processed", HttpStatus.CONFLICT);
         }
 
-        provider.setRegistrationStatus(approve? RegistrationStatus.APPROVED: RegistrationStatus.REJECTED);
+        provider.setRegistrationStatus(approve ? RegistrationStatus.APPROVED : RegistrationStatus.REJECTED);
 
         providerRepository.save(provider);
     }

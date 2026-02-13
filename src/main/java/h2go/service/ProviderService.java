@@ -38,7 +38,7 @@ public class ProviderService {
         Provider provider = providerMapper.toEntity(providerDTO.provider());
         User user = userMapper.toEntity(providerDTO.user(), passwordEncoder);
 
-        if (userRepository.findByEmail(user.getEmail()).isPresent()){
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new ApiException("email already exists", HttpStatus.CONFLICT);
         }
 

@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -23,6 +24,9 @@ public class Provider {
 
     @Column(nullable = false)
     private String businessName;
+
+    @OneToMany(mappedBy = "provider")
+    private List<Product> products;
 
     @Column(nullable = false)
     private String serviceCity;

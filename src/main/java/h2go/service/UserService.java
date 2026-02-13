@@ -34,7 +34,7 @@ public class UserService {
 
     @PreAuthorize("hasRole('ADMIN')")
     public Page<UserRetrievalResponse> getAllUsers(Integer page, Integer size) {
-        if (page == null || size == null || size <= 0 || page <= 0 || size > 100) {
+        if (page == null || size == null || size <= 0 || page < 0 || size > 100) {
             throw new ApiException("invalid page or size parameter", HttpStatus.BAD_REQUEST);
         }
         Page<User> users = userRepository.findAllByDeletedAtIsNullOrderByIdAsc(PageRequest.of(page, size));
@@ -87,10 +87,9 @@ public class UserService {
         User user = userRepository.findByEmailAndDeletedAtIsNull(email)
                 .orElseThrow(() -> new ApiException("User not found", HttpStatus.NOT_FOUND));
 
-        if (!user.getEmail().equals(userRegistrationRequest.email())) {
-            if (userRepository.findByEmail(userRegistrationRequest.email()).isPresent()) {
+        if (!user.getEmail().equals(userRegistrationRequest.email())
+                && userRepository.findByEmail(userRegistrationRequest.email()).isPresent()) {
                 throw new ApiException("A user with this email already exists", HttpStatus.CONFLICT);
-            }
         }
 
         userMapper.updateEntityFromDto(userRegistrationRequest, user, passwordEncoder);
