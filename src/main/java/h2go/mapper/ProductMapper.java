@@ -6,15 +6,15 @@ import h2go.model.Product;
 import h2go.model.enums.RegistrationStatus;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", imports = RegistrationStatus.class)
+@Mapper(componentModel = "spring", imports = RegistrationStatus.class, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ProductMapper {
 
     @Mapping(target = "deletedAt", ignore = true)
     @Mapping(target = "id", ignore = true)
-
     Product toEntity(ProductCreationalRequest productCreationalRequest);
 
     ProductResponse toDto(Product product);

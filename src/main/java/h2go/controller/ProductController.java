@@ -5,12 +5,12 @@ import h2go.dto.response.ProductResponse;
 import h2go.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,8 +19,13 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public List<ProductResponse> findAll() {
-        return productService.findAll();
+    public Page<ProductResponse> findAll(
+            @RequestParam(defaultValue = "0")
+            Integer page,
+            @RequestParam(defaultValue = "20")
+            Integer size
+    ) {
+        return productService.findAll(page, size);
     }
 
     @PostMapping
