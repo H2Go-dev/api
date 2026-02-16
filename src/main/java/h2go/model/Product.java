@@ -1,6 +1,9 @@
 package h2go.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -12,16 +15,20 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+    @NotNull(message = "name can't be null")
     private String name;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "provider_id")
     private Provider provider;
 
+    @DecimalMin(value = "0.1", message = "price can't be zero or negative")
     private Double price;
 
+    @DecimalMin(value = "0.1", message = "price can't be zero or negative")
     private Double volume;
 
+    @Min(value = 0, message = "stock can't be negative")
     private Integer stock;
 
     private String nutritionalFacts;

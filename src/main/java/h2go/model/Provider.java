@@ -2,6 +2,7 @@ package h2go.model;
 
 import h2go.model.enums.RegistrationStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,10 +21,14 @@ public class Provider {
 
     @OneToOne
     @MapsId
+    @NotNull
     private User user;
 
     @Column(nullable = false)
     private String businessName;
+
+    @OneToMany(mappedBy = "provider")
+    private List<Subscription> subscriptions;
 
     @OneToMany(mappedBy = "provider")
     private List<Product> products;

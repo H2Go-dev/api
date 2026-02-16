@@ -42,6 +42,9 @@ public class User implements UserDetails {
     @Column(length = 15)
     private String phoneNumber;
 
+    @OneToMany(mappedBy = "user")
+    private List<Subscription> subscriptions;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 

@@ -33,6 +33,9 @@ public class ProductService {
     private final ProviderRepository providerRepository;
 
     public Page<ProductResponse> findAll(Integer page, Integer size) {
+        if (page == null || size == null || size <= 0 || page < 0 ) {
+            throw new ApiException("page and size must be greater than zero", HttpStatus.BAD_REQUEST);
+        }
         return productRepository.findAll(PageRequest.of(page, size)).map(productMapper::toDto);
     }
 
