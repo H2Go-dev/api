@@ -45,6 +45,9 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<Subscription> subscriptions;
 
+    @OneToMany(mappedBy = "user")
+    private List<Address> addresses;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
