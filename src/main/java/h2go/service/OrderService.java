@@ -1,10 +1,13 @@
 package h2go.service;
 
 import h2go.dto.request.OrderCreationRequest;
+import h2go.dto.response.OrderResponse;
 import h2go.exception.ApiException;
+import h2go.mapper.OrderMapper;
 import h2go.model.*;
 import h2go.model.enums.OrderStatus;
 import h2go.model.enums.RegistrationStatus;
+import h2go.model.enums.Role;
 import h2go.model.enums.SubscriptionStatus;
 import h2go.repository.*;
 import jakarta.transaction.Transactional;
@@ -34,6 +37,8 @@ public class OrderService {
     private final ProductRepository productRepository;
 
     private final SubscriptionRepository subscriptionRepository;
+
+    private final OrderMapper orderMapper;
 
     @Transactional
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
@@ -113,5 +118,24 @@ public class OrderService {
 
         return new ResponseEntity<String>("Order Created Successfully", HttpStatus.CREATED);
 
+    }
+
+    public List<OrderResponse> getMyOrders(String email) {
+        User user = userRepository.findByEmailAndDeletedAtIsNull(email)
+                .orElseThrow(() -> new ApiException("User not found", HttpStatus.UNAUTHORIZED));
+
+        List<Order> orders;
+
+        if (user.getRole() == Role.USER) {
+            orders = orderRepository.findByUserIdAndDeletedAtIsNull(user.getId());
+        } else if (user.getRole() == Role.PROVIDER) {
+            Provider provider = providerRepository.findByIdAndDeletedAtIsNull(user.getId())
+                    .orElseThrow(() -> new ApiException("Provider not found", HttpStatus.NOT_FOUND));
+            orders = orderRepository.findByProviderIdAndDeletedAtIsNull(provider.getId());
+        } else {
+            orders = orderRepository.findByDeletedAtIsNull();
+        }
+
+        return orders.stream().map(orderMapper::toDto).toList();
     }
 }
