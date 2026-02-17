@@ -1,26 +1,33 @@
 package h2go.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Data
-public class Address {
+public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "order_id")
+    private Order order;
 
-    @OneToMany(mappedBy = "address")
-    private List<Order> order;
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
 
-    private String addressDetails;
+    @NotNull
+    @Min(value = 1, message = "quantity must be at least 1")
+    private Integer quantity;
+
+    @NotNull
+    private Double priceAtPurchase;
 
     private LocalDateTime deletedAt;
 
@@ -31,5 +38,4 @@ public class Address {
     public void softDelete() {
         this.deletedAt = LocalDateTime.now();
     }
-
 }

@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -21,6 +22,9 @@ public class Product {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "provider_id")
     private Provider provider;
+
+    @OneToMany(mappedBy = "product")
+    private List<OrderItem> orderItems;
 
     @DecimalMin(value = "0.1", message = "price can't be zero or negative")
     private Double price;

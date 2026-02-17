@@ -66,7 +66,7 @@ public class SubscriptionService {
         return new ResponseEntity<>(subscriptionMapper.toDto(savedSubscription), HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasAnyRole('Admin', 'Provider')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROVIDER')")
     public ResponseEntity<SubscriptionRetrievalResponse> approveSubscription(
             String email,
             String subscriptionId,

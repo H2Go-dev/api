@@ -31,6 +31,9 @@ public class Provider {
     private List<Subscription> subscriptions;
 
     @OneToMany(mappedBy = "provider")
+    private List<Order> orders;
+
+    @OneToMany(mappedBy = "provider")
     private List<Product> products;
 
     @Column(nullable = false)
