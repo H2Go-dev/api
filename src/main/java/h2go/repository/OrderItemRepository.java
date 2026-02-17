@@ -7,5 +7,4 @@ import java.util.Optional;
 
 public interface OrderItemRepository extends JpaRepository<OrderItem, String> {
     Optional<OrderItem> findByIdAndDeletedAtIsNull(String id);
-
 }
