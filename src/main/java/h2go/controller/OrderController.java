@@ -1,5 +1,7 @@
 package h2go.controller;
 
+import h2go.dto.request.ApproveOrderRequest;
+import h2go.dto.request.ChangeOrderStatusRequest;
 import h2go.dto.request.OrderCreationRequest;
 import h2go.dto.response.OrderResponse;
 import h2go.service.OrderService;
@@ -31,4 +33,21 @@ public class OrderController {
         return orderService.createOrder(userDetails.getUsername(), orderCreationRequest);
     }
 
+    @PutMapping("/approve/{orderId}")
+    public ResponseEntity<String> approveOrder(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable String orderId,
+            @RequestBody ApproveOrderRequest approveOrderRequest
+    ) {
+        return orderService.confirmOrder(userDetails.getUsername(), orderId, approveOrderRequest);
+    }
+
+    @PutMapping("/status/{orderId}")
+    public OrderResponse changeOrderStatus(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable String orderId,
+            @RequestBody ChangeOrderStatusRequest changeOrderStatusRequest
+    ) {
+        return orderService.changeOrderStatus(userDetails.getUsername(), orderId, changeOrderStatusRequest);
+    }
 }

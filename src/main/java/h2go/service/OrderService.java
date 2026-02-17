@@ -1,5 +1,7 @@
 package h2go.service;
 
+import h2go.dto.request.ApproveOrderRequest;
+import h2go.dto.request.ChangeOrderStatusRequest;
 import h2go.dto.request.OrderCreationRequest;
 import h2go.dto.response.OrderResponse;
 import h2go.exception.ApiException;
@@ -82,6 +84,7 @@ public class OrderService {
 
         // to solve n+1 problem here
         List<Product> productsToUpdate = new ArrayList<>();
+
         List<OrderItem> orderItemList = orderCreationRequest.products().stream().map(
                 (e) -> {
 
@@ -118,9 +121,11 @@ public class OrderService {
         order.setOrderItems(orderItemList);
         order.setOrderStatus(OrderStatus.PENDING);
         order.setOrderType(orderCreationRequest.orderType());
+
         order.setTotalPrice(orderItemList.stream().mapToDouble(
                 item -> item.getPriceAtPurchase() * item.getQuantity()
         ).sum());
+
         orderItemList.forEach(item -> item.setOrder(order));
 
         // TODO don't forget to set the delivery date when approving in the order
@@ -150,4 +155,53 @@ public class OrderService {
 
         return orders.stream().map(orderMapper::toDto).toList();
     }
+
+    public ResponseEntity<String> confirmOrder(String email, String orderId, ApproveOrderRequest approveOrderRequest) {
+        Order order =  orderRepository.findById(orderId)
+                .orElseThrow(() -> new ApiException("Order not found", HttpStatus.NOT_FOUND));
+
+        if (! order.getProvider().getUser().getEmail().equals(email)) {
+            throw new  ApiException("user doesn't have credentials to edit this", HttpStatus.UNAUTHORIZED);
+        }
+
+        order.setOrderStatus(approveOrderRequest.approved() ?  OrderStatus.APPROVED : OrderStatus.REJECTED);
+        order.setDeliveryDate(approveOrderRequest.deliveryDate());
+
+        if (! approveOrderRequest.approved()) {
+            order.setRejectionReason(approveOrderRequest.rejectionReason());
+        }
+
+        orderRepository.save(order);
+
+        return new ResponseEntity<>("Order Confirmed", HttpStatus.OK);
+    }
+
+    public OrderResponse changeOrderStatus(
+            String email,
+            String orderId,
+            ChangeOrderStatusRequest changeOrderStatusRequest
+    ) {
+        Order order =  orderRepository.findById(orderId)
+                .orElseThrow(() -> new ApiException("Order not found", HttpStatus.NOT_FOUND));
+
+        if (! order.getProvider().getUser().getEmail().equals(email)) {
+            throw new  ApiException("user doesn't have credentials to edit this", HttpStatus.UNAUTHORIZED);
+        }
+
+        if (order.getOrderStatus() == OrderStatus.PENDING) {
+            throw new  ApiException("order hasn't been approved to be delivered", HttpStatus.BAD_REQUEST);
+        }
+
+        if (order.getOrderStatus().equals(OrderStatus.REJECTED)) {
+            throw new  ApiException("order is rejected", HttpStatus.BAD_REQUEST);
+        }
+
+        // idk whether to check if the new order status is deliever that the previous status is out for delivery  TODO
+
+        order.setOrderStatus(changeOrderStatusRequest.orderStatus());
+        orderRepository.save(order);
+
+        return orderMapper.toDto(order);
+    }
+
 }
