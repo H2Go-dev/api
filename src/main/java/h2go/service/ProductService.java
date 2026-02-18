@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-@PreAuthorize("hasAnyRole('ADMIN', 'PROVIDER')")
 public class ProductService {
     private final ProductRepository productRepository;
 
@@ -32,6 +31,7 @@ public class ProductService {
 
     private final ProviderRepository providerRepository;
 
+    @PreAuthorize("hasRole('ADMIN')")
     public Page<ProductResponse> findAll(Integer page, Integer size) {
         if (page == null || size == null || size <= 0 || page < 0 ) {
             throw new ApiException("page and size must be greater than zero", HttpStatus.BAD_REQUEST);
@@ -39,6 +39,24 @@ public class ProductService {
         return productRepository.findAll(PageRequest.of(page, size)).map(productMapper::toDto);
     }
 
+    public Page<ProductResponse> findAllByProviderId(String providerId, Integer page, Integer size) {
+        if (page == null || size == null || size <= 0 || page < 0 ) {
+            throw new ApiException("page and size must be greater than zero", HttpStatus.BAD_REQUEST);
+        }
+
+        return productRepository.findByProviderIdAndDeletedAtIsNull(providerId, PageRequest.of(page, size)).map(productMapper::toDto);
+    }
+
+    @PreAuthorize("hasRole('PROVIDER')")
+    public Page<ProductResponse> findMyProducts(String email, Integer page, Integer size) {
+        if (page == null || size == null || size <= 0 || page < 0 ) {
+            throw new ApiException("page and size must be greater than zero", HttpStatus.BAD_REQUEST);
+        }
+
+        return productRepository.findByProviderUserEmailAndDeletedAtIsNull(email, PageRequest.of(page, size)).map(productMapper::toDto);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROVIDER')")
     public ResponseEntity<ProductResponse> addProduct(ProductCreationalRequest productRequest, String email) {
 
         User user = userRepository.findByEmailAndDeletedAtIsNull(email)
