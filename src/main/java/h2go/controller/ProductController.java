@@ -33,9 +33,9 @@ public class ProductController {
     public Page<ProductResponse> findByProviderIdAndDeletedAtIsNull(
             @PathVariable("providerId")
             String providerId,
-            @RequestParam
+            @RequestParam(defaultValue = "0")
             int page,
-            @RequestParam
+            @RequestParam(defaultValue = "20")
             int size
     ) {
         return productService.findAllByProviderId(providerId, page, size);
@@ -46,9 +46,9 @@ public class ProductController {
     public Page<ProductResponse> findByProviderId(
             @AuthenticationPrincipal
             UserDetails userDetails,
-            @RequestParam
+            @RequestParam(defaultValue = "0")
             int page,
-            @RequestParam
+            @RequestParam(defaultValue = "20")
             int size
     ) {
 
