@@ -3,6 +3,7 @@ package h2go.controller;
 import h2go.dto.request.ApproveSubscriptionRequest;
 import h2go.dto.response.SubscriptionRetrievalResponse;
 import h2go.service.SubscriptionService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -38,7 +39,7 @@ public class SubscriptionController {
             UserDetails userDetails,
             @PathVariable
             String subscriptionId,
-            @RequestBody
+            @Valid @RequestBody
             ApproveSubscriptionRequest approveSubscriptionRequest
     ) {
         return subscriptionService.approveSubscription(

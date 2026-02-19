@@ -33,7 +33,7 @@ BEGIN
                 NEW.user_id,
                 NEW.address_id,
                 NEW.provider_user_id,
-                'PENDING',
+                'APPROVED',
                 NEW.order_type,
                 NEW.total_price,
                 new_delivery_date,

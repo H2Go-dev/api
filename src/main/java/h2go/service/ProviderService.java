@@ -35,6 +35,7 @@ public class ProviderService {
 
     private final UserMapper userMapper;
 
+    @Transactional
     public ProviderRetrievalResponse register(@Valid ProviderRegistrationRequest providerDTO) {
         Provider provider = providerMapper.toEntity(providerDTO.provider());
         User user = userMapper.toEntity(providerDTO.user(), passwordEncoder);

@@ -35,7 +35,7 @@ public class ProductService {
         if (page == null || size == null || size <= 0 || page < 0 ) {
             throw new ApiException("page and size must be greater than zero", HttpStatus.BAD_REQUEST);
         }
-        return productRepository.findAll(PageRequest.of(page, size)).map(productMapper::toDto);
+        return productRepository.findByDeletedAtIsNull(PageRequest.of(page, size)).map(productMapper::toDto);
     }
 
     public Page<ProductResponse> findAllByProviderId(String providerId, Integer page, Integer size) {

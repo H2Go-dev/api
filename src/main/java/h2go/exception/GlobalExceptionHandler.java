@@ -52,7 +52,7 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(
             HttpStatus.UNAUTHORIZED.value(),
             "Invalid username or password",
-            List.of(new FieldError("credentials", ex.getMessage(), null)),
+            List.of(new FieldError("credentials", "Invalid username or password", null)),
             LocalDateTime.now()
         );
 
@@ -63,12 +63,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleAuthorizationException(
             AuthorizationDeniedException ex, WebRequest request) {
        ErrorResponse errorResponse = new ErrorResponse(
-               HttpStatus.UNAUTHORIZED.value(),
-               "You don't have permissions to access to this resource",
-               List.of(new FieldError("credentials", ex.getMessage(), null)),
+               HttpStatus.FORBIDDEN.value(),
+               "You don't have permission to access this resource",
+               List.of(new FieldError("authorization", "Access denied", null)),
                LocalDateTime.now()
        );
-       return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+       return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
     }
 
 
@@ -76,8 +76,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleJwtExpiryException(ExpiredJwtException ex, WebRequest request) {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.UNAUTHORIZED.value(),
-                "Your jwt token got expired login again",
-                List.of(new FieldError("credentials", ex.getMessage(), null)),
+                "JWT token expired, login again",
+                List.of(new FieldError("credentials", "JWT token expired", null)),
                 LocalDateTime.now()
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
@@ -110,7 +110,7 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(
             HttpStatus.CONFLICT.value(),
             message,
-            List.of(new FieldError("resource", ex.getMessage(), null)),
+            List.of(new FieldError("resource", message, null)),
             LocalDateTime.now()
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
@@ -125,7 +125,7 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(
             HttpStatus.INTERNAL_SERVER_ERROR.value(),
             "An unexpected error occurred",
-            List.of(new FieldError("global", ex.getMessage(), null)),
+            List.of(new FieldError("global", "Internal server error", null)),
             LocalDateTime.now()
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);

@@ -25,7 +25,7 @@ public class AddressService {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<String> addAddress(String email, AddressRequest address) {
 
-        User user =  userRepository.findByEmail(email)
+        User user =  userRepository.findByEmailAndDeletedAtIsNull(email)
                 .orElseThrow(() -> new ApiException("user not found", HttpStatus.NOT_FOUND));
 
         Address addressEntity = new Address();
@@ -38,7 +38,7 @@ public class AddressService {
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public List<AddressRetrievalResponse> getMyAddresses(String email) {
-        User user =  userRepository.findByEmail(email)
+        User user =  userRepository.findByEmailAndDeletedAtIsNull(email)
                 .orElseThrow(() -> new ApiException("user not found", HttpStatus.UNAUTHORIZED));
 
         return user.getAddresses().stream().map(
@@ -54,7 +54,7 @@ public class AddressService {
                 .orElseThrow( () -> new ApiException("address not found", HttpStatus.NOT_FOUND));
 
         if (!address.getUser().getEmail().equals(email)) {
-            throw new ApiException("", HttpStatus.UNAUTHORIZED);
+            throw new ApiException("can't update this address", HttpStatus.FORBIDDEN);
         }
 
         address.setAddressDetails(addressDetails.addressDetails());

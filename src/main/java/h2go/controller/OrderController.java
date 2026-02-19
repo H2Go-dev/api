@@ -37,7 +37,7 @@ public class OrderController {
     public ResponseEntity<String> approveOrder(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable String orderId,
-            @RequestBody ApproveOrderRequest approveOrderRequest
+            @Valid @RequestBody ApproveOrderRequest approveOrderRequest
     ) {
         return orderService.confirmOrder(userDetails.getUsername(), orderId, approveOrderRequest);
     }
@@ -46,7 +46,7 @@ public class OrderController {
     public OrderResponse changeOrderStatus(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable String orderId,
-            @RequestBody ChangeOrderStatusRequest changeOrderStatusRequest
+            @Valid @RequestBody ChangeOrderStatusRequest changeOrderStatusRequest
     ) {
         return orderService.changeOrderStatus(userDetails.getUsername(), orderId, changeOrderStatusRequest);
     }

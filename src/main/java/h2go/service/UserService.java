@@ -41,6 +41,7 @@ public class UserService {
         return users.map(userMapper::toDto);
     }
 
+    @Transactional
     public UserRetrievalResponse createUser(UserRegistrationRequest userRegistrationRequest) {
         if (userRepository.findByEmail(userRegistrationRequest.email()).isPresent()) {
             throw new ApiException("A user with this email already exists", HttpStatus.CONFLICT);

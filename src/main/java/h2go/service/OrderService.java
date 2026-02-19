@@ -133,7 +133,7 @@ public class OrderService {
         productRepository.saveAll(productsToUpdate);
         orderItemRepository.saveAll(orderItemList);
 
-        return new ResponseEntity<String>("Order Created Successfully", HttpStatus.CREATED);
+        return new ResponseEntity<>("Order Created Successfully", HttpStatus.CREATED);
 
     }
 
@@ -161,12 +161,13 @@ public class OrderService {
     @Transactional
     @PreAuthorize("hasAnyRole('ADMIN', 'PROVIDER')")
     public ResponseEntity<String> confirmOrder(String email, String orderId, ApproveOrderRequest approveOrderRequest) {
-        Order order =  orderRepository.findById(orderId)
+        User actor = userRepository.findByEmailAndDeletedAtIsNull(email)
+                .orElseThrow(() -> new ApiException("User not found", HttpStatus.UNAUTHORIZED));
+
+        Order order =  orderRepository.findByIdAndDeletedAtIsNull(orderId)
                 .orElseThrow(() -> new ApiException("Order not found", HttpStatus.NOT_FOUND));
 
-        if (! order.getProvider().getUser().getEmail().equals(email)) {
-            throw new  ApiException("user doesn't have credentials to edit this", HttpStatus.UNAUTHORIZED);
-        }
+        ensureCanManageOrder(actor, order);
 
         order.setOrderStatus(approveOrderRequest.approved() ?  OrderStatus.APPROVED : OrderStatus.REJECTED);
         order.setDeliveryDate(approveOrderRequest.deliveryDate());
@@ -187,12 +188,13 @@ public class OrderService {
             String orderId,
             ChangeOrderStatusRequest changeOrderStatusRequest
     ) {
-        Order order =  orderRepository.findById(orderId)
+        User actor = userRepository.findByEmailAndDeletedAtIsNull(email)
+                .orElseThrow(() -> new ApiException("User not found", HttpStatus.UNAUTHORIZED));
+
+        Order order =  orderRepository.findByIdAndDeletedAtIsNull(orderId)
                 .orElseThrow(() -> new ApiException("Order not found", HttpStatus.NOT_FOUND));
 
-        if (! order.getProvider().getUser().getEmail().equals(email)) {
-            throw new  ApiException("user doesn't have credentials to edit this", HttpStatus.UNAUTHORIZED);
-        }
+        ensureCanManageOrder(actor, order);
 
         if (order.getOrderStatus() == OrderStatus.PENDING) {
             throw new  ApiException("order hasn't been approved to be delivered", HttpStatus.BAD_REQUEST);
@@ -206,6 +208,16 @@ public class OrderService {
         orderRepository.save(order);
 
         return orderMapper.toDto(order);
+    }
+
+    private void ensureCanManageOrder(User user, Order order) {
+        if (user.getRole() == Role.ADMIN) {
+            return;
+        }
+        boolean isProviderOwner = order.getProvider().getUser().getEmail().equals(user.getEmail());
+        if (!isProviderOwner) {
+            throw new ApiException("user doesn't have credentials to edit this", HttpStatus.FORBIDDEN);
+        }
     }
 
 }

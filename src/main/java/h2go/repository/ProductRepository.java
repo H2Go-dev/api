@@ -8,7 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, String> {
-    Page<Product> findAllByOrderByVolumeAsc(Pageable pageable);
+
+    Page<Product> findByDeletedAtIsNull(Pageable pageable);
 
     Optional<Product> findByIdAndDeletedAtIsNull(String id);
 

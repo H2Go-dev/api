@@ -3,6 +3,7 @@ package h2go.controller;
 import h2go.dto.request.AddressRequest;
 import h2go.dto.response.AddressRetrievalResponse;
 import h2go.service.AddressService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,7 +29,7 @@ public class AddressController {
     @PostMapping
     public ResponseEntity<String> createAddress(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody AddressRequest addressRequest
+            @Valid @RequestBody AddressRequest addressRequest
     ) {
         return addressService.addAddress(userDetails.getUsername(), addressRequest);
     }
@@ -37,7 +38,7 @@ public class AddressController {
     public ResponseEntity<String> updateAddress(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable String addressId,
-            @RequestBody AddressRequest addressDetails
+            @Valid @RequestBody AddressRequest addressDetails
     ) {
         return addressService.updateAddress(userDetails.getUsername(), addressId, addressDetails);
     }
