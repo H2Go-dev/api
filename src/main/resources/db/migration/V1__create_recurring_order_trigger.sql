@@ -43,10 +43,10 @@ BEGIN
 
             FOR old_order_item IN
                 SELECT id, product_id, quantity, price_at_purchase, deleted_at
-                FROM order_items
+                FROM order_item
                 WHERE order_id = OLD.id AND deleted_at IS NULL
             LOOP
-                INSERT INTO order_items (
+                INSERT INTO order_item (
                     id,
                     order_id,
                     product_id,
