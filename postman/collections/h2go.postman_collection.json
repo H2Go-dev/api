@@ -1,0 +1,1070 @@
+{
+  "info": {
+    "_postman_id": "4905a541-90bb-4c7b-bb02-d1e33b4407b8",
+    "name": "h2go",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "No Authorization Required",
+      "item": [
+        {
+          "name": "auth",
+          "item": [
+            {
+              "name": "register user",
+              "id": "47e130ac-6737-4892-9398-1744ffdd802b",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\":\"ahmed\",\n    \"email\":\"ahmed@gmail.com\",\n    \"phoneNumber\":\"+201009693453\",\n    \"password\": \"password123\",\n    \"role\": \"ADMIN\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/register/user",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "register",
+                    "user"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "(manual) register admin",
+              "id": "3e9b8357-a088-456c-b2ed-be0a5715a82d",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\":\"ahmed\",\n    \"email\":\"ahmedwanas@gmail.com\",\n    \"phoneNumber\":\"+201009693453\",\n    \"password\": \"password123\",\n    \"role\": \"ADMIN\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/register/user",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "register",
+                    "user"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "register provider",
+              "id": "6e788eae-4fe4-4506-af85-5b4e7c947079",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"user\":{\n        \"name\":\"ahmed\",\n        \"email\":\"ahmedwaelwanas@gmail.com\",\n        \"phoneNumber\":\"+201009693453\",\n        \"password\": \"password123\",\n        \"role\": \"ADMIN\"\n    },\n    \"provider\":{\n        \"businessName\":\"عم حسن للمياة\",\n        \"serviceCity\":\"cairo\"\n    }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/register/provider",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "register",
+                    "provider"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "login admin",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "2a6286ad-3014-4e69-934a-8970d4103758",
+                    "exec": [
+                      "pm.response.to.have.status(200);",
+                      "var token = pm.response.text();",
+                      "pm.collectionVariables.set(\"JWT_TOKEN\", token);",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "id": "e1022b5f-35ea-4863-a517-0a1313aeb818",
+                    "exec": [
+                      "pm.collectionVariables.set(\"JWT_TOKEN\", \"\");",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "id": "936a2332-defd-47fc-a2fd-469b2c61211e",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"email\": \"ahmedwanas@gmail.com\",\n    \"password\": \"password123\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/login",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "login provider",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "2a6286ad-3014-4e69-934a-8970d4103758",
+                    "exec": [
+                      "pm.response.to.have.status(200);",
+                      "var token = pm.response.text();",
+                      "pm.collectionVariables.set(\"JWT_TOKEN\", token);",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "id": "e1022b5f-35ea-4863-a517-0a1313aeb818",
+                    "exec": [
+                      "pm.collectionVariables.set(\"JWT_TOKEN\", \"\");",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "id": "87df1959-e372-488f-98f4-73b93c2db8dd",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"email\": \"ahmedwaelwanas@gmail.com\",\n    \"password\": \"password123\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/login",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "login user",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "2a6286ad-3014-4e69-934a-8970d4103758",
+                    "exec": [
+                      "pm.response.to.have.status(200);",
+                      "var token = pm.response.text();",
+                      "pm.collectionVariables.set(\"JWT_TOKEN\", token);",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "id": "e1022b5f-35ea-4863-a517-0a1313aeb818",
+                    "exec": [
+                      "pm.collectionVariables.set(\"JWT_TOKEN\", \"\");",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "id": "1f5beb2a-c3e8-47e4-b36e-348b4a91e564",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"email\": \"ahmed@gmail.com\",\n    \"password\": \"password123\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/login",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "id": "6ac63e81-1435-429d-b81a-fc2962a089cd",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "82fca1aa-f536-4d97-9262-bc07ec1f2e66",
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "exec": [
+                  "pm.collectionVariables.set(\"JWT_TOKEN\", \"\");",
+                  ""
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "0254b9e1-2b62-468f-a051-0db9bb1c1364",
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "exec": [
+                  ""
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "id": "2d7927f6-1296-43a0-b0bb-b1a409341bfc"
+    },
+    {
+      "name": "admin",
+      "item": [
+        {
+          "name": "providers",
+          "item": [
+            {
+              "name": "get all providers",
+              "id": "9ba34f2e-03c5-442e-9fc0-1b650f1e0e09",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/providers?page=0&size=5",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "providers"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "5"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "approve Provider",
+              "id": "66d15db3-f1ed-4acf-b398-7bd1ccc1d2bb",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/admin/approve/provider/{{provider_id}}?approve",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "approve",
+                    "provider",
+                    "{{provider_id}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "approve",
+                      "value": null
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "id": "f72ee05f-c696-4e42-8aef-9946cb09b995"
+        },
+        {
+          "name": "users",
+          "item": [
+            {
+              "name": "get all users",
+              "id": "387eee47-eb8f-44fe-a017-d898437c7556",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/users?size=5&page=0",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users"
+                  ],
+                  "query": [
+                    {
+                      "key": "size",
+                      "value": "5"
+                    },
+                    {
+                      "key": "page",
+                      "value": "0"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "get user by id",
+              "id": "6bc115c1-a319-439f-b164-a6540866ea7c",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/users/a0ddf3cb-bc7e-408c-bc77-2ea548b2be7b",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "a0ddf3cb-bc7e-408c-bc77-2ea548b2be7b"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "delete user",
+              "id": "98732712-ac67-4a76-8329-79fa596f6981",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/users/7329824c-7754-4120-8c2b-815b93bf418f",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "7329824c-7754-4120-8c2b-815b93bf418f"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "id": "e318b043-9377-4884-a784-7c193efb042c"
+        }
+      ],
+      "id": "7bdfa25f-780b-4a4f-80ba-174d884f2404"
+    },
+    {
+      "name": "user",
+      "item": [
+        {
+          "name": "profile",
+          "item": [
+            {
+              "name": "profile",
+              "id": "58625913-9000-4790-a2a5-d732870f2d8a",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/users/profile",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "profile"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update profile",
+              "id": "a134ef15-0f3a-44b7-a9ed-126614a95005",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\":\"bate5a\",\n    \"email\":\"ahmedwanas@gmail.com\",\n    \"phoneNumber\":\"+201009693453\",\n    \"password\": \"sdafssdfd123\",\n    \"role\": \"ADMIN\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/users",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "id": "b8bac534-9bd2-4d2f-9e71-38d6825c1e33"
+        },
+        {
+          "name": "subscription",
+          "item": [
+            {
+              "name": "subscribe to provider",
+              "id": "542da44b-26c5-4af8-a071-8c026ade4ca3",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/subscriptions/{{provider_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "subscriptions",
+                    "{{provider_id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "get all subscriptions",
+              "id": "a1ed02d0-398e-4ff7-aff1-d35c6e7e5238",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/subscriptions?page=0&size=5",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "subscriptions"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "5"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "cancel subscription",
+              "id": "8cc9e045-e8d3-4f0c-b23a-bde2d3c72ab9",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"approved\": false,\n    \"rejectionReason\": \"because you're far away\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/subscriptions/cancel/db260ee9-6794-467d-a430-ae548138f6a4",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "subscriptions",
+                    "cancel",
+                    "db260ee9-6794-467d-a430-ae548138f6a4"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "id": "3ef57c62-7b98-48b9-9ef0-8b54f3cd7310"
+        },
+        {
+          "name": "address",
+          "item": [
+            {
+              "name": "add address",
+              "id": "d220638b-cfa2-4726-b2dc-029f3a65670b",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"addressDetails\": \"whatever\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/address",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "address"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update address",
+              "id": "a35e4eca-5ef7-4228-af11-b1768cfc94f8",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"addressDetails\": \"w\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/address/4addb549-5bc1-4a58-bb3b-d57283981307",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "address",
+                    "4addb549-5bc1-4a58-bb3b-d57283981307"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "get my addresses",
+              "id": "7c767150-548c-4589-857b-b046f7ad362a",
+              "request": {
+                "auth": {
+                  "type": "bearer"
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/address",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "address"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "id": "db07992c-df5c-4ae3-a701-28526644f267"
+        },
+        {
+          "name": "order",
+          "item": [
+            {
+              "name": "create order",
+              "id": "59f4b8ec-a12a-4486-a3cf-8986fe7896d8",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"providerId\": \"{{provider_id}}\",\n    \"addressId\": \"{{addressId}}\",\n    \"products\": [\n        {\n            \"productId\": \"{{product_id}}\",\n            \"quantity\": 1\n        }\n    ],\n    \"orderType\": \"DAILY\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/orders",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "orders"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "get orders",
+              "id": "59b637b1-d73e-4c08-ac69-12673aa71a36",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"providerId\": \"{{provider_id}}\",\n    \"addressId\": \"{{addressId}}\",\n    \"products\": [\n        {\n            \"productId\": \"{{product_id}}\",\n            \"quantity\": 1\n        }\n    ],\n    \"orderType\": \"DAILY\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/orders",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "orders"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "id": "376a8cdc-1655-489d-b26c-5e34dedb2cb0"
+        }
+      ],
+      "id": "ccbdd45f-9770-45e8-8d82-62ba1a764199"
+    },
+    {
+      "name": "provider",
+      "item": [
+        {
+          "name": "orders",
+          "item": [
+            {
+              "name": "get orders",
+              "id": "71089aac-89d3-4d12-822e-370e09b3cf90",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"providerId\": \"{{provider_id}}\",\n    \"addressId\": \"{{addressId}}\",\n    \"products\": [\n        {\n            \"productId\": \"{{product_id}}\",\n            \"quantity\": 1\n        }\n    ],\n    \"orderType\": \"DAILY\",\n    \"deliveryDate\" : \"2021-06-03 00:00:00\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/orders",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "orders"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "approve order",
+              "id": "98c2e14d-8834-4870-b168-cc70ebeb23d6",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"approved\": \"true\",\n    \"rejectionReason\": \"rejection reason body\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/orders/approve/{{order_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "orders",
+                    "approve",
+                    "{{order_id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "change order status",
+              "id": "fe2670b7-8907-4d64-b332-bb09499b6aaf",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"orderStatus\": \"DELIVERED\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/orders/status/{{order_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "orders",
+                    "status",
+                    "{{order_id}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "id": "47597c99-fffb-43c8-ab45-7faa3976b79e"
+        },
+        {
+          "name": "products",
+          "item": [
+            {
+              "name": "add product",
+              "id": "042e2ac4-4d9c-41bc-ae5f-8a278d68cd9e",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\":\"20L water bottle\",\n    \"price\": 20.0,\n    \"volume\": 20.0,\n    \"stock\": 500,\n    \"nutritionalFacts\":\"whatever\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/products",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "products"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "get provider products",
+              "id": "18491610-ebd8-4eb9-a2e7-c111ddd46ec0",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/products/{{provider_id}}?page=0&size=5",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "products",
+                    "{{provider_id}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "5"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "get my products",
+              "id": "0d2de743-3817-42b8-83d6-e1ce49f56643",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/products/my?page=0&size=5",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "products",
+                    "my"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "5"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "id": "ec3d21f5-2a73-4ede-b915-bc69b6fc7ba7"
+        },
+        {
+          "name": "subscriptions",
+          "item": [
+            {
+              "name": "approve subscription",
+              "id": "f0fe1a89-0da1-4ecf-bc2f-aabc2d1ea06e",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"approved\": true,\n    \"rejectionReason\": \"because you're far away\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/subscriptions/approve/{{sub_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "subscriptions",
+                    "approve",
+                    "{{sub_id}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "cancel subscription",
+              "id": "3bf45677-77ed-4150-bee7-84748373c66d",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"approved\": false,\n    \"rejectionReason\": \"because you're far away\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/subscriptions/cancel/db260ee9-6794-467d-a430-ae548138f6a4",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "subscriptions",
+                    "cancel",
+                    "db260ee9-6794-467d-a430-ae548138f6a4"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "id": "ef52753f-d4e1-439e-b87d-83a44a2d9a68"
+        }
+      ],
+      "id": "7ae20ba0-a604-4d90-8a14-b50ec88202d9"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{JWT_TOKEN}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "id": "241e6f49-8f4f-47f9-b698-9ea9750e2beb",
+      "key": "base_url",
+      "value": ""
+    },
+    {
+      "id": "950260dd-fbc2-460a-b552-f071204f8b78",
+      "key": "password",
+      "value": ""
+    },
+    {
+      "id": "63d95452-9afb-4cb8-a5b3-9dad36631db9",
+      "key": "JWT_TOKEN",
+      "value": ""
+    },
+    {
+      "id": "ad771cd8-c1b3-4cb7-84d3-47ad6e4761d6",
+      "key": "provider_id",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "id": "93cbdf03-a2c4-495f-a757-dd69743f5c9f",
+      "key": "user_id",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "id": "9f0d6dbb-113e-4e16-bbc4-63dc47133bc9",
+      "key": "sub_id",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "id": "c2cc9fb6-85fe-4b6a-a894-e039a54ab948",
+      "key": "addressId",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "id": "64df7ac8-edbe-4675-8b41-2c9217ddb7a3",
+      "key": "product_id",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "id": "8588cfab-788c-4ea0-b3d3-d52b4a74f668",
+      "key": "order_id",
+      "value": "",
+      "type": "default"
+    }
+  ]
+}

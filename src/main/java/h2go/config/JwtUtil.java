@@ -30,7 +30,16 @@ public class JwtUtil {
 
   @PostConstruct
   public void init() {
-    this.secretKey = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+    if (jwtSecret == null || jwtSecret.isBlank()) {
+      throw new IllegalStateException("JWT secret is not configured");
+    }
+    
+    byte[] secretBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
+    if (secretBytes.length < 32) {
+      throw new IllegalStateException("JWT secret must be at least 256 bits (32 characters)");
+    }
+    
+    this.secretKey = Keys.hmacShaKeyFor(secretBytes);
     log.info("JWT secret key initialized successfully");
   }
 

@@ -61,8 +61,8 @@ public class UserService {
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public void deleteUser(String id) {
-        User user = userRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(
-            () -> new ApiException("User not found", HttpStatus.NOT_FOUND));
+        User user = userRepository.findByIdAndDeletedAtIsNull(id)
+                .orElseThrow( () -> new ApiException("User not found", HttpStatus.NOT_FOUND));
 
         user.softDelete();
 
@@ -76,12 +76,12 @@ public class UserService {
         userRepository.save(user);
     }
 
-  public UserRetrievalResponse getUserProfile(String email) {
-    User user = userRepository.findByEmailAndDeletedAtIsNull(email).orElseThrow(
-            () -> new ApiException("User not found", HttpStatus.NOT_FOUND));
-    // TODO: to add the order details and history when orders are implemented
-    return userMapper.toDto(user);
-  }
+    public UserRetrievalResponse getUserProfile(String email) {
+        User user = userRepository.findByEmailAndDeletedAtIsNull(email)
+                .orElseThrow( () -> new ApiException("User not found", HttpStatus.NOT_FOUND));
+        // TODO: to add the order details and history when orders are implemented
+        return userMapper.toDto(user);
+    }
 
     public UserRetrievalResponse updateUser(String email, UserRegistrationRequest userRegistrationRequest) {
         User user = userRepository.findByEmailAndDeletedAtIsNull(email)

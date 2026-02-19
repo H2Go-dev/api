@@ -1,6 +1,3 @@
--- Trigger to create a new order when an order is delivered (for recurring orders)
--- This trigger fires AFTER UPDATE on the orders table
-
 CREATE OR REPLACE FUNCTION create_recurring_order()
 RETURNS TRIGGER AS $$
 DECLARE
@@ -8,11 +5,8 @@ DECLARE
     new_order_id UUID;
     old_order_item RECORD;
 BEGIN
-    -- Only proceed if order_status changed to DELIVERED
     IF NEW.order_status = 'DELIVERED' AND OLD.order_status != 'DELIVERED' THEN
-        -- Only proceed if order_type is not ONCE
         IF NEW.order_type != 'ONCE' THEN
-            -- Calculate new delivery date based on order_type
             CASE NEW.order_type
                 WHEN 'DAILY' THEN
                     new_delivery_date := NOW() + INTERVAL '1 day';
@@ -24,12 +18,11 @@ BEGIN
                     new_delivery_date := NULL;
             END CASE;
 
-            -- Insert new order with same details but PENDING status and new delivery date
             INSERT INTO orders (
                 id,
                 user_id,
                 address_id,
-                provider_id,
+                provider_user_id,
                 order_status,
                 order_type,
                 total_price,
@@ -39,7 +32,7 @@ BEGIN
                 gen_random_uuid(),
                 NEW.user_id,
                 NEW.address_id,
-                NEW.provider_id,
+                NEW.provider_user_id,
                 'PENDING',
                 NEW.order_type,
                 NEW.total_price,
@@ -48,7 +41,6 @@ BEGIN
             )
             RETURNING id INTO new_order_id;
 
-            -- Copy order items from the old order to the new order
             FOR old_order_item IN
                 SELECT id, product_id, quantity, price_at_purchase, deleted_at
                 FROM order_items
@@ -77,7 +69,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Create the trigger
 DROP TRIGGER IF EXISTS trigger_create_recurring_order ON orders;
 
 CREATE TRIGGER trigger_create_recurring_order

@@ -1,13 +1,10 @@
 package h2go.repository;
 
-import h2go.dto.response.ProductResponse;
 import h2go.model.Product;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.nio.channels.FileChannel;
 import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, String> {

@@ -137,6 +137,8 @@ public class OrderService {
 
     }
 
+    @Transactional
+    @PreAuthorize("isAuthenticated()")
     public List<OrderResponse> getMyOrders(String email) {
         User user = userRepository.findByEmailAndDeletedAtIsNull(email)
                 .orElseThrow(() -> new ApiException("User not found", HttpStatus.UNAUTHORIZED));
@@ -156,6 +158,8 @@ public class OrderService {
         return orders.stream().map(orderMapper::toDto).toList();
     }
 
+    @Transactional
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROVIDER')")
     public ResponseEntity<String> confirmOrder(String email, String orderId, ApproveOrderRequest approveOrderRequest) {
         Order order =  orderRepository.findById(orderId)
                 .orElseThrow(() -> new ApiException("Order not found", HttpStatus.NOT_FOUND));
@@ -176,6 +180,8 @@ public class OrderService {
         return new ResponseEntity<>("Order Confirmed", HttpStatus.OK);
     }
 
+    @Transactional
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROVIDER')")
     public OrderResponse changeOrderStatus(
             String email,
             String orderId,
@@ -195,8 +201,6 @@ public class OrderService {
         if (order.getOrderStatus().equals(OrderStatus.REJECTED)) {
             throw new  ApiException("order is rejected", HttpStatus.BAD_REQUEST);
         }
-
-        // idk whether to check if the new order status is deliever that the previous status is out for delivery  TODO
 
         order.setOrderStatus(changeOrderStatusRequest.orderStatus());
         orderRepository.save(order);

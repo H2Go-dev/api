@@ -9,6 +9,7 @@ import h2go.repository.AddressRepository;
 import h2go.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ public class AddressService {
 
     private final UserRepository userRepository;
 
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<String> addAddress(String email, AddressRequest address) {
 
         User user =  userRepository.findByEmail(email)
@@ -34,7 +36,8 @@ public class AddressService {
         return new ResponseEntity<>("address added successfully", HttpStatus.CREATED);
     }
 
-    public List<AddressRetrievalResponse> findall(String email) {
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public List<AddressRetrievalResponse> getMyAddresses(String email) {
         User user =  userRepository.findByEmail(email)
                 .orElseThrow(() -> new ApiException("user not found", HttpStatus.UNAUTHORIZED));
 
@@ -45,6 +48,7 @@ public class AddressService {
         ).toList();
     }
 
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<String> updateAddress(String email, String addressId, AddressRequest addressDetails) {
         Address address = addressRepository.findByIdAndDeletedAtIsNull(addressId)
                 .orElseThrow( () -> new ApiException("address not found", HttpStatus.NOT_FOUND));
@@ -57,7 +61,6 @@ public class AddressService {
         addressRepository.save(address);
 
         return new ResponseEntity<>("address Modified successfully",HttpStatus.OK);
-
     }
 
 

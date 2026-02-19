@@ -19,10 +19,10 @@ public class AddressController {
     private final AddressService addressService;
 
     @GetMapping
-    public List<AddressRetrievalResponse> retrieveAddress(
+    public List<AddressRetrievalResponse> getMyAddresses(
             @AuthenticationPrincipal UserDetails userDetails
     ) {
-        return addressService.findall(userDetails.getUsername());
+        return addressService.getMyAddresses(userDetails.getUsername());
     }
 
     @PostMapping
@@ -34,7 +34,7 @@ public class AddressController {
     }
 
     @PutMapping("/{addressId}")
-    public ResponseEntity<String> createAddress(
+    public ResponseEntity<String> updateAddress(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable String addressId,
             @RequestBody AddressRequest addressDetails

@@ -11,6 +11,7 @@ import h2go.model.enums.RegistrationStatus;
 import h2go.model.enums.Role;
 import h2go.repository.ProviderRepository;
 import h2go.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -52,6 +53,7 @@ public class ProviderService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
     public Page<ProviderRetrievalResponse> getProviders(Integer page, Integer size) {
         if (page == null || size == null || size <= 0 || page < 0 || size > 100) {
             throw new ApiException("invalid page or size parameter", HttpStatus.BAD_REQUEST);

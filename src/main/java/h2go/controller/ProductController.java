@@ -6,7 +6,6 @@ import h2go.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,7 +29,14 @@ public class ProductController {
     }
 
     @GetMapping("/{providerId}")
-    public Page<ProductResponse> findByProviderIdAndDeletedAtIsNull(@PathVariable("providerId") String providerId, @RequestParam int page, @RequestParam int size) {
+    public Page<ProductResponse> findByProviderIdAndDeletedAtIsNull(
+            @PathVariable("providerId")
+            String providerId,
+            @RequestParam
+            int page,
+            @RequestParam
+            int size
+    ) {
         return productService.findAllByProviderId(providerId, page, size);
 
     }
