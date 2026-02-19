@@ -8,7 +8,7 @@ import h2go.model.Provider;
 import h2go.model.User;
 import h2go.repository.ProviderRepository;
 import h2go.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,6 +33,7 @@ public class UserService {
 
 
     @PreAuthorize("hasRole('ADMIN')")
+    @Transactional(readOnly = true)
     public Page<UserRetrievalResponse> getAllUsers(Integer page, Integer size) {
         if (page == null || size == null || size <= 0 || page < 0 || size > 100) {
             throw new ApiException("invalid page or size parameter", HttpStatus.BAD_REQUEST);
@@ -52,6 +53,7 @@ public class UserService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+    @Transactional(readOnly = true)
     public UserRetrievalResponse getUserById(String id) {
         User user = userRepository.findByIdAndDeletedAtIsNull(id)
         .orElseThrow(() -> new ApiException("User not found", HttpStatus.NOT_FOUND));
@@ -77,6 +79,7 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional(readOnly = true)
     public UserRetrievalResponse getUserProfile(String email) {
         User user = userRepository.findByEmailAndDeletedAtIsNull(email)
                 .orElseThrow( () -> new ApiException("User not found", HttpStatus.NOT_FOUND));
@@ -84,6 +87,7 @@ public class UserService {
         return userMapper.toDto(user);
     }
 
+    @Transactional
     public UserRetrievalResponse updateUser(String email, UserRegistrationRequest userRegistrationRequest) {
         User user = userRepository.findByEmailAndDeletedAtIsNull(email)
                 .orElseThrow(() -> new ApiException("User not found", HttpStatus.NOT_FOUND));

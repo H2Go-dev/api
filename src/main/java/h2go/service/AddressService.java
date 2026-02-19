@@ -10,7 +10,6 @@ import h2go.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,7 +22,7 @@ public class AddressService {
     private final UserRepository userRepository;
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<String> addAddress(String email, AddressRequest address) {
+    public AddressRetrievalResponse addAddress(String email, AddressRequest address) {
 
         User user =  userRepository.findByEmailAndDeletedAtIsNull(email)
                 .orElseThrow(() -> new ApiException("user not found", HttpStatus.NOT_FOUND));
@@ -31,9 +30,9 @@ public class AddressService {
         Address addressEntity = new Address();
         addressEntity.setUser(user);
         addressEntity.setAddressDetails(address.addressDetails());
-        addressRepository.save(addressEntity);
+        Address savedAddress = addressRepository.save(addressEntity);
 
-        return new ResponseEntity<>("address added successfully", HttpStatus.CREATED);
+        return new AddressRetrievalResponse(savedAddress.getId(), savedAddress.getAddressDetails());
     }
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
@@ -49,7 +48,7 @@ public class AddressService {
     }
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<String> updateAddress(String email, String addressId, AddressRequest addressDetails) {
+    public AddressRetrievalResponse updateAddress(String email, String addressId, AddressRequest addressDetails) {
         Address address = addressRepository.findByIdAndDeletedAtIsNull(addressId)
                 .orElseThrow( () -> new ApiException("address not found", HttpStatus.NOT_FOUND));
 
@@ -58,9 +57,9 @@ public class AddressService {
         }
 
         address.setAddressDetails(addressDetails.addressDetails());
-        addressRepository.save(address);
+        Address updatedAddress = addressRepository.save(address);
 
-        return new ResponseEntity<>("address Modified successfully",HttpStatus.OK);
+        return new AddressRetrievalResponse(updatedAddress.getId(), updatedAddress.getAddressDetails());
     }
 
 

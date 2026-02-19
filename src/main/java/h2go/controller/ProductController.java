@@ -6,6 +6,7 @@ import h2go.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -63,7 +64,8 @@ public class ProductController {
             @Valid
             ProductCreationalRequest productCreationalRequest) {
 
-        return productService.addProduct(productCreationalRequest, userDetails.getUsername());
+        ProductResponse productResponse = productService.addProduct(productCreationalRequest, userDetails.getUsername());
+        return ResponseEntity.status(HttpStatus.CREATED).body(productResponse);
     }
 
 }

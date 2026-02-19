@@ -111,7 +111,7 @@
                     "exec": [
                       "pm.response.to.have.status(200);",
                       "var token = pm.response.text();",
-                      "pm.collectionVariables.set(\"JWT_TOKEN\", token);",
+                      "pm.environment.set(\"JWT_TOKEN\", token);",
                       ""
                     ],
                     "type": "text/javascript",
@@ -124,7 +124,7 @@
                   "script": {
                     "id": "e1022b5f-35ea-4863-a517-0a1313aeb818",
                     "exec": [
-                      "pm.collectionVariables.set(\"JWT_TOKEN\", \"\");",
+                      "pm.environment.set(\"JWT_TOKEN\", \"\");",
                       ""
                     ],
                     "type": "text/javascript",
@@ -170,7 +170,7 @@
                     "exec": [
                       "pm.response.to.have.status(200);",
                       "var token = pm.response.text();",
-                      "pm.collectionVariables.set(\"JWT_TOKEN\", token);",
+                      "pm.environment.set(\"JWT_TOKEN\", token);",
                       ""
                     ],
                     "type": "text/javascript",
@@ -183,7 +183,7 @@
                   "script": {
                     "id": "e1022b5f-35ea-4863-a517-0a1313aeb818",
                     "exec": [
-                      "pm.collectionVariables.set(\"JWT_TOKEN\", \"\");",
+                      "pm.environment.set(\"JWT_TOKEN\", \"\");",
                       ""
                     ],
                     "type": "text/javascript",
@@ -229,7 +229,7 @@
                     "exec": [
                       "pm.response.to.have.status(200);",
                       "var token = pm.response.text();",
-                      "pm.collectionVariables.set(\"JWT_TOKEN\", token);",
+                      "pm.environment.set(\"JWT_TOKEN\", token);",
                       ""
                     ],
                     "type": "text/javascript",
@@ -242,7 +242,7 @@
                   "script": {
                     "id": "e1022b5f-35ea-4863-a517-0a1313aeb818",
                     "exec": [
-                      "pm.collectionVariables.set(\"JWT_TOKEN\", \"\");",
+                      "pm.environment.set(\"JWT_TOKEN\", \"\");",
                       ""
                     ],
                     "type": "text/javascript",
@@ -1016,55 +1016,49 @@
   },
   "variable": [
     {
-      "id": "8be3241c-2abd-4fcd-8607-b5648c758a51",
+      "id": "2af313cd-4d84-464e-842e-60a14f7ffc05",
       "key": "base_url",
       "value": ""
     },
     {
-      "id": "8117bab8-8f2e-4cda-8df5-f754ff2f8b6d",
+      "id": "ff225b37-65a0-4970-9d16-a29edf475f7a",
       "key": "password",
       "value": ""
     },
     {
-      "id": "db3e32a9-c772-4ab4-9bb1-bb91c4b6033b",
-      "key": "JWT_TOKEN",
+      "id": "7a10d598-223e-40fd-87ff-a87c87a680d8",
+      "key": "provider_id",
       "value": ""
     },
     {
-      "id": "3858b117-d3ba-403a-8ab1-130c8d797668",
-      "key": "provider_id",
-      "value": "",
-      "type": "default"
-    },
-    {
-      "id": "484344a9-a834-4794-9c82-ce506b59512d",
+      "id": "e8bdfb16-da4e-4bd0-8bc0-e6de90d666b1",
       "key": "user_id",
-      "value": "",
-      "type": "default"
+      "value": ""
     },
     {
-      "id": "2c9a3f2a-2078-4dec-bfeb-04ccda939202",
+      "id": "06864dee-0c22-4698-b105-5b707048125b",
       "key": "sub_id",
-      "value": "",
-      "type": "default"
+      "value": ""
     },
     {
-      "id": "65f6a389-f72a-4dd2-8695-c27d21b95e60",
+      "id": "833dd168-ac06-4eef-b0e8-40e354f956c4",
       "key": "addressId",
-      "value": "",
-      "type": "default"
+      "value": ""
     },
     {
-      "id": "354c7270-0f34-4fdb-bf6c-de88cba86c15",
+      "id": "08a4e805-13ae-411c-8329-1c79f0128d07",
       "key": "product_id",
-      "value": "",
-      "type": "default"
+      "value": ""
     },
     {
-      "id": "75e32dc1-cec9-4479-ab0d-748997961903",
+      "id": "5469aa26-01d8-4dae-b268-f051951bb598",
       "key": "order_id",
-      "value": "",
-      "type": "default"
+      "value": ""
+    },
+    {
+      "id": "7f7b785b-f834-475a-a999-d46952bd3cc1",
+      "key": "JWT_TOKEN",
+      "value": ""
     }
   ]
 }

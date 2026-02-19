@@ -24,10 +24,10 @@ import h2go.repository.ProductRepository;
 import h2go.repository.ProviderRepository;
 import h2go.repository.SubscriptionRepository;
 import h2go.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import h2go.util.ErrorMessages;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -56,7 +56,7 @@ public class OrderService {
 
     @Transactional
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<String> createOrder(String email, OrderCreationRequest orderCreationRequest) {
+    public String createOrder(String email, OrderCreationRequest orderCreationRequest) {
         User user =  userRepository.findByEmailAndDeletedAtIsNull(email)
                 .orElseThrow(() -> new ApiException("User not found", HttpStatus.UNAUTHORIZED));
 
@@ -82,25 +82,24 @@ public class OrderService {
             throw new  ApiException("subscription is not approved", HttpStatus.BAD_REQUEST);
         }
 
-        // to solve n+1 problem here
         List<Product> productsToUpdate = new ArrayList<>();
 
         List<OrderItem> orderItemList = orderCreationRequest.products().stream().map(
                 (e) -> {
 
                     Product product = productRepository.findByIdAndDeletedAtIsNull(e.productId())
-                            .orElseThrow(() -> new ApiException("Product not found", HttpStatus.NOT_FOUND));
+                            .orElseThrow(() -> new ApiException(ErrorMessages.PRODUCT_NOT_FOUND, HttpStatus.NOT_FOUND));
 
                     if (!product.getProvider().getId().equals(provider.getId())) {
-                        throw new ApiException("Product is not available in provider", HttpStatus.BAD_REQUEST);
+                        throw new ApiException(ErrorMessages.PRODUCT_NOT_AVAILABLE, HttpStatus.BAD_REQUEST);
                     }
 
-                    if (e.quantity() <= 0) {
-                        throw new ApiException("quantity cannot be Zero or less", HttpStatus.BAD_REQUEST);
+                    if (e.quantity() == null || e.quantity() <= 0) {
+                        throw new ApiException(ErrorMessages.INVALID_QUANTITY, HttpStatus.BAD_REQUEST);
                     }
 
-                    if (product.getStock() < e.quantity()) {
-                        throw new ApiException("Product quantity less than stock", HttpStatus.BAD_REQUEST);
+                    if (product.getStock() == null || product.getStock() < e.quantity()) {
+                        throw new ApiException(ErrorMessages.INSUFFICIENT_STOCK, HttpStatus.BAD_REQUEST);
                     }
 
                     OrderItem orderItem = new OrderItem();
@@ -133,23 +132,23 @@ public class OrderService {
         productRepository.saveAll(productsToUpdate);
         orderItemRepository.saveAll(orderItemList);
 
-        return new ResponseEntity<>("Order Created Successfully", HttpStatus.CREATED);
+        return "Order Created Successfully";
 
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @PreAuthorize("isAuthenticated()")
     public List<OrderResponse> getMyOrders(String email) {
         User user = userRepository.findByEmailAndDeletedAtIsNull(email)
-                .orElseThrow(() -> new ApiException("User not found", HttpStatus.UNAUTHORIZED));
+                .orElseThrow(() -> new ApiException(ErrorMessages.USER_NOT_FOUND, HttpStatus.NOT_FOUND));
 
         List<Order> orders;
 
-        if (user.getRole() == Role.USER) {
+       if (user.getRole() == Role.USER) {
             orders = orderRepository.findByUserIdAndDeletedAtIsNull(user.getId());
         } else if (user.getRole() == Role.PROVIDER) {
             Provider provider = providerRepository.findByIdAndDeletedAtIsNull(user.getId())
-                    .orElseThrow(() -> new ApiException("Provider not found", HttpStatus.NOT_FOUND));
+                    .orElseThrow(() -> new ApiException(ErrorMessages.PROVIDER_NOT_FOUND, HttpStatus.NOT_FOUND));
             orders = orderRepository.findByProviderIdAndDeletedAtIsNull(provider.getId());
         } else {
             orders = orderRepository.findByDeletedAtIsNull();
@@ -160,7 +159,7 @@ public class OrderService {
 
     @Transactional
     @PreAuthorize("hasAnyRole('ADMIN', 'PROVIDER')")
-    public ResponseEntity<String> confirmOrder(String email, String orderId, ApproveOrderRequest approveOrderRequest) {
+    public String confirmOrder(String email, String orderId, ApproveOrderRequest approveOrderRequest) {
         User actor = userRepository.findByEmailAndDeletedAtIsNull(email)
                 .orElseThrow(() -> new ApiException("User not found", HttpStatus.UNAUTHORIZED));
 
@@ -178,7 +177,7 @@ public class OrderService {
 
         orderRepository.save(order);
 
-        return new ResponseEntity<>("Order Confirmed", HttpStatus.OK);
+        return "Order Confirmed";
     }
 
     @Transactional
@@ -214,9 +213,10 @@ public class OrderService {
         if (user.getRole() == Role.ADMIN) {
             return;
         }
-        boolean isProviderOwner = order.getProvider().getUser().getEmail().equals(user.getEmail());
+        String providerOwnerEmail = order.getProvider().getUser().getEmail();
+        boolean isProviderOwner = providerOwnerEmail != null && providerOwnerEmail.equals(user.getEmail());
         if (!isProviderOwner) {
-            throw new ApiException("user doesn't have credentials to edit this", HttpStatus.FORBIDDEN);
+            throw new ApiException(ErrorMessages.UNAUTHORIZED_ACTION, HttpStatus.FORBIDDEN);
         }
     }
 

@@ -15,9 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -31,34 +31,39 @@ public class ProductService {
 
     private final ProviderRepository providerRepository;
 
+    private static final int MAX_PAGE_SIZE = 100;
+
+    @Transactional(readOnly = true)
     public Page<ProductResponse> findAll(Integer page, Integer size) {
-        if (page == null || size == null || size <= 0 || page < 0 ) {
-            throw new ApiException("page and size must be greater than zero", HttpStatus.BAD_REQUEST);
-        }
+        validatePageParams(page, size);
         return productRepository.findByDeletedAtIsNull(PageRequest.of(page, size)).map(productMapper::toDto);
     }
 
+    @Transactional(readOnly = true)
     public Page<ProductResponse> findAllByProviderId(String providerId, Integer page, Integer size) {
-        if (page == null || size == null || size <= 0 || page < 0 ) {
-            throw new ApiException("page and size must be greater than zero", HttpStatus.BAD_REQUEST);
-        }
+        validatePageParams(page, size);
 
         return productRepository.findByProviderIdAndDeletedAtIsNull(providerId, PageRequest.of(page, size))
                 .map(productMapper::toDto);
     }
 
     @PreAuthorize("hasRole('PROVIDER')")
+    @Transactional(readOnly = true)
     public Page<ProductResponse> findMyProducts(String email, Integer page, Integer size) {
-        if (page == null || size == null || size <= 0 || page < 0 ) {
-            throw new ApiException("page and size must be greater than zero", HttpStatus.BAD_REQUEST);
-        }
+        validatePageParams(page, size);
 
         return productRepository.findByProviderUserEmailAndDeletedAtIsNull(email, PageRequest.of(page, size))
                 .map(productMapper::toDto);
     }
 
+    private void validatePageParams(Integer page, Integer size) {
+        if (page == null || size == null || size <= 0 || page < 0 || size > MAX_PAGE_SIZE) {
+            throw new ApiException("page and size must be greater than zero and size cannot exceed " + MAX_PAGE_SIZE, HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PreAuthorize("hasAnyRole('ADMIN', 'PROVIDER')")
-    public ResponseEntity<ProductResponse> addProduct(ProductCreationalRequest productRequest, String email) {
+    public ProductResponse addProduct(ProductCreationalRequest productRequest, String email) {
 
         User user = userRepository.findByEmailAndDeletedAtIsNull(email)
                 .orElseThrow(() -> new ApiException("User doesn't exist", HttpStatus.UNAUTHORIZED));
@@ -76,8 +81,7 @@ public class ProductService {
         Product product = productMapper.toEntity(productRequest);
         product.setProvider(provider);
 
-        ProductResponse productResponse = productMapper.toDto(productRepository.save(product));
-        return new ResponseEntity<>(productResponse, HttpStatus.CREATED);
+        return productMapper.toDto(productRepository.save(product));
     }
 
 }

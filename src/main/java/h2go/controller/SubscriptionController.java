@@ -5,6 +5,7 @@ import h2go.dto.response.SubscriptionRetrievalResponse;
 import h2go.service.SubscriptionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,7 +31,11 @@ public class SubscriptionController {
             @PathVariable
             String providerId
     ) {
-        return subscriptionService.addSubscription(userDetails.getUsername(), providerId);
+        SubscriptionRetrievalResponse subscription = subscriptionService.addSubscription(
+                userDetails.getUsername(),
+                providerId
+        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(subscription);
     }
 
     @PutMapping("/approve/{subscriptionId}")
@@ -42,11 +47,12 @@ public class SubscriptionController {
             @Valid @RequestBody
             ApproveSubscriptionRequest approveSubscriptionRequest
     ) {
-        return subscriptionService.approveSubscription(
+        SubscriptionRetrievalResponse subscription = subscriptionService.approveSubscription(
                 userDetails.getUsername(),
                 subscriptionId,
                 approveSubscriptionRequest
         );
+        return ResponseEntity.ok(subscription);
     }
 
     @PutMapping("/cancel/{subscriptionId}")
@@ -56,7 +62,11 @@ public class SubscriptionController {
             @PathVariable
             String subscriptionId
     ) {
-        return subscriptionService.cancelSubscription(userDetails.getUsername(), subscriptionId);
+        SubscriptionRetrievalResponse subscription = subscriptionService.cancelSubscription(
+                userDetails.getUsername(),
+                subscriptionId
+        );
+        return ResponseEntity.ok(subscription);
     }
 
 }

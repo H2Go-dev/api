@@ -15,9 +15,9 @@ import h2go.repository.SubscriptionRepository;
 import h2go.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -32,6 +32,7 @@ public class SubscriptionService {
 
     private final ProviderRepository providerRepository;
 
+    @Transactional(readOnly = true)
     public List<SubscriptionRetrievalResponse> findAll(String email) {
         User user = userRepository.findByEmailAndDeletedAtIsNull(email)
                 .orElseThrow(() -> new ApiException("user not found", HttpStatus.UNAUTHORIZED));
@@ -47,7 +48,8 @@ public class SubscriptionService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<SubscriptionRetrievalResponse> addSubscription(String email, String providerId) {
+    @Transactional
+    public SubscriptionRetrievalResponse addSubscription(String email, String providerId) {
         User user = userRepository.findByEmailAndDeletedAtIsNull(email)
                 .orElseThrow(() -> new ApiException("user not found", HttpStatus.UNAUTHORIZED));
 
@@ -63,11 +65,11 @@ public class SubscriptionService {
         subscription.setUser(user);
         Subscription savedSubscription = subscriptionRepository.save(subscription);
 
-        return new ResponseEntity<>(subscriptionMapper.toDto(savedSubscription), HttpStatus.CREATED);
+        return subscriptionMapper.toDto(savedSubscription);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'PROVIDER')")
-    public ResponseEntity<SubscriptionRetrievalResponse> approveSubscription(
+    public SubscriptionRetrievalResponse approveSubscription(
             String email,
             String subscriptionId,
             ApproveSubscriptionRequest approveSubscriptionRequest
@@ -92,11 +94,12 @@ public class SubscriptionService {
         }
 
         subscriptionRepository.save(subscription);
-        return new ResponseEntity<>(subscriptionMapper.toDto(subscription), HttpStatus.OK);
+        return subscriptionMapper.toDto(subscription);
     }
 
 
-    public ResponseEntity<SubscriptionRetrievalResponse> cancelSubscription(String email, String subscriptionId) {
+    @Transactional
+    public SubscriptionRetrievalResponse cancelSubscription(String email, String subscriptionId) {
         Subscription subscription = subscriptionRepository.findByIdAndDeletedAtIsNull(subscriptionId)
                 .orElseThrow(() -> new ApiException("subscription not found", HttpStatus.BAD_REQUEST));
 
@@ -111,6 +114,6 @@ public class SubscriptionService {
 
         subscriptionRepository.save(subscription);
 
-        return new ResponseEntity<>(subscriptionMapper.toDto(subscription), HttpStatus.OK);
+        return subscriptionMapper.toDto(subscription);
     }
 }

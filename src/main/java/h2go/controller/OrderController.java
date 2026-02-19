@@ -7,6 +7,7 @@ import h2go.dto.response.OrderResponse;
 import h2go.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,7 +31,8 @@ public class OrderController {
             @AuthenticationPrincipal UserDetails userDetails,
             @Valid @RequestBody OrderCreationRequest orderCreationRequest
     ) {
-        return orderService.createOrder(userDetails.getUsername(), orderCreationRequest);
+        String responseMessage = orderService.createOrder(userDetails.getUsername(), orderCreationRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseMessage);
     }
 
     @PutMapping("/approve/{orderId}")
@@ -39,7 +41,8 @@ public class OrderController {
             @PathVariable String orderId,
             @Valid @RequestBody ApproveOrderRequest approveOrderRequest
     ) {
-        return orderService.confirmOrder(userDetails.getUsername(), orderId, approveOrderRequest);
+        String responseMessage = orderService.confirmOrder(userDetails.getUsername(), orderId, approveOrderRequest);
+        return ResponseEntity.ok(responseMessage);
     }
 
     @PutMapping("/status/{orderId}")
