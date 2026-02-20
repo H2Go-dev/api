@@ -84,6 +84,10 @@ public class OrderService {
             throw new  ApiException("subscription is not approved", HttpStatus.BAD_REQUEST);
         }
 
+        if (orderCreationRequest.products().isEmpty()) {
+            throw new ApiException("order can't be empty", HttpStatus.BAD_REQUEST);
+        }
+
         List<Product> productsToUpdate = new ArrayList<>();
 
         List<OrderItem> orderItemList = orderCreationRequest.products().stream().map(

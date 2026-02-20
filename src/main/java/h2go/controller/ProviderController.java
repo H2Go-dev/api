@@ -24,6 +24,17 @@ public class ProviderController {
             @RequestParam(defaultValue = "20")
             Integer size
     ) {
+        return providerService.getProviders(page, size);
+    }
+
+    @GetMapping("/approved")
+    public Page<ProviderRetrievalResponse> approvedProviders(
+            @RequestParam(defaultValue = "0")
+            Integer page,
+            @RequestParam(defaultValue = "20")
+            Integer size
+    ) {
         return providerService.getApprovedProviders(page, size);
     }
+
 }

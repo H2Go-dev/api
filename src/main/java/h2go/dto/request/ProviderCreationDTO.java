@@ -1,6 +1,5 @@
 package h2go.dto.request;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
 public record ProviderCreationDTO(

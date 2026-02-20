@@ -18,6 +18,7 @@ public record OrderCreationRequest(
         @Valid
         @NotEmpty(message = "products cannot be empty")
         List<OrderItemDTO> products,
+        @Valid
         @NotNull(message = "orderType is required")
         OrderType orderType
 ) {

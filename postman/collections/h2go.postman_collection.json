@@ -335,11 +335,13 @@
                   "query": [
                     {
                       "key": "page",
-                      "value": "0"
+                      "value": "0",
+                      "uuid": "cf90a9e3-3494-4c2b-ba9e-12a1a40455e1"
                     },
                     {
                       "key": "size",
-                      "value": "5"
+                      "value": "5",
+                      "uuid": "ffa47ed4-4dd9-40af-9020-04fd2847653d"
                     }
                   ]
                 }
@@ -603,7 +605,7 @@
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n    \"addressDetails\": \"whatever\"\n}",
+                  "raw": "{\n    \"addressDetails\": \"Giza, Egypt\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -656,9 +658,6 @@
               "name": "get my addresses",
               "id": "7c767150-548c-4589-857b-b046f7ad362a",
               "request": {
-                "auth": {
-                  "type": "bearer"
-                },
                 "method": "GET",
                 "header": [],
                 "url": {
@@ -741,6 +740,102 @@
             }
           ],
           "id": "376a8cdc-1655-489d-b26c-5e34dedb2cb0"
+        },
+        {
+          "name": "providers",
+          "item": [
+            {
+              "name": "get approved providers",
+              "id": "09decb81-b908-4f67-8dd1-863815e1c8d2",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/providers/approved?page=0&size=5",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "providers",
+                    "approved"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "0",
+                      "uuid": "cf90a9e3-3494-4c2b-ba9e-12a1a40455e1"
+                    },
+                    {
+                      "key": "size",
+                      "value": "5",
+                      "uuid": "ffa47ed4-4dd9-40af-9020-04fd2847653d"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "get provider products",
+              "id": "18491610-ebd8-4eb9-a2e7-c111ddd46ec0",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/products/{{provider_id}}?page=0&size=5",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "products",
+                    "{{provider_id}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "5"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "approve Provider",
+              "id": "c3a67e75-06f2-4173-83d9-2b8cf3592201",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/admin/approve/provider/{{provider_id}}?approve",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "admin",
+                    "approve",
+                    "provider",
+                    "{{provider_id}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "approve",
+                      "value": null
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "id": "f5eaf63b-e3a7-4386-b295-e0f8d60a1e92"
         }
       ],
       "id": "ccbdd45f-9770-45e8-8d82-62ba1a764199"
@@ -841,6 +936,36 @@
                 }
               },
               "response": []
+            },
+            {
+              "name": "cancel order",
+              "id": "40f454b3-a9ee-4d9f-84cd-ac0350b58783",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"approved\": \"true\",\n    \"rejectionReason\": \"rejection reason body\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/orders/cancel/{{order_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "orders",
+                    "cancel",
+                    "{{order_id}}"
+                  ]
+                }
+              },
+              "response": []
             }
           ],
           "id": "47597c99-fffb-43c8-ab45-7faa3976b79e"
@@ -871,36 +996,6 @@
                   "path": [
                     "api",
                     "products"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "get provider products",
-              "id": "18491610-ebd8-4eb9-a2e7-c111ddd46ec0",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{base_url}}/api/products/{{provider_id}}?page=0&size=5",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "api",
-                    "products",
-                    "{{provider_id}}"
-                  ],
-                  "query": [
-                    {
-                      "key": "page",
-                      "value": "0"
-                    },
-                    {
-                      "key": "size",
-                      "value": "5"
-                    }
                   ]
                 }
               },
@@ -996,6 +1091,35 @@
                 }
               },
               "response": []
+            },
+            {
+              "name": "get all subscriptions",
+              "id": "175704d8-58d1-4c4c-94b8-f6d77ad504bb",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/subscriptions?page=0&size=5",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "subscriptions"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "0"
+                    },
+                    {
+                      "key": "size",
+                      "value": "5"
+                    }
+                  ]
+                }
+              },
+              "response": []
             }
           ],
           "id": "ef52753f-d4e1-439e-b87d-83a44a2d9a68"
@@ -1016,47 +1140,47 @@
   },
   "variable": [
     {
-      "id": "2af313cd-4d84-464e-842e-60a14f7ffc05",
+      "id": "02afe5fb-f6f8-4976-8ce5-673d620fdebc",
       "key": "base_url",
       "value": ""
     },
     {
-      "id": "ff225b37-65a0-4970-9d16-a29edf475f7a",
+      "id": "ecb978bc-3cf2-4bbc-8a61-65a8135e9e49",
       "key": "password",
       "value": ""
     },
     {
-      "id": "7a10d598-223e-40fd-87ff-a87c87a680d8",
+      "id": "71ffeddb-e51c-4c26-ac76-4b2742c7e63e",
       "key": "provider_id",
       "value": ""
     },
     {
-      "id": "e8bdfb16-da4e-4bd0-8bc0-e6de90d666b1",
+      "id": "a448f184-14ed-48d6-b3ea-f9dab3751091",
       "key": "user_id",
       "value": ""
     },
     {
-      "id": "06864dee-0c22-4698-b105-5b707048125b",
+      "id": "2532eb75-9571-431b-8b66-7987d8e2e604",
       "key": "sub_id",
       "value": ""
     },
     {
-      "id": "833dd168-ac06-4eef-b0e8-40e354f956c4",
+      "id": "14b2d000-e0b7-47dd-b825-c0295e6c1c4c",
       "key": "addressId",
       "value": ""
     },
     {
-      "id": "08a4e805-13ae-411c-8329-1c79f0128d07",
+      "id": "5602b3ab-e3fa-4b2a-91b1-d2adee03775c",
       "key": "product_id",
       "value": ""
     },
     {
-      "id": "5469aa26-01d8-4dae-b268-f051951bb598",
+      "id": "d661a5e9-be74-4a8a-8544-917ee3e23044",
       "key": "order_id",
       "value": ""
     },
     {
-      "id": "7f7b785b-f834-475a-a999-d46952bd3cc1",
+      "id": "023ab2ae-36ba-4987-9201-2eeee89fe042",
       "key": "JWT_TOKEN",
       "value": ""
     }

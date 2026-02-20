@@ -39,14 +39,9 @@ public class AddressService {
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public List<AddressRetrievalResponse> getMyAddresses(String email) {
-        User user =  userRepository.findByEmailAndDeletedAtIsNull(email)
-                .orElseThrow(() -> new ApiException("user not found", HttpStatus.UNAUTHORIZED));
-
-        return user.getAddresses().stream().map(
-                (e) -> {
-                    return new AddressRetrievalResponse(e.getId(), e.getAddressDetails());
-                }
-        ).toList();
+        return addressRepository.findAllByUserEmailAndDeletedAtIsNull(email).stream()
+                .map(address -> new AddressRetrievalResponse(address.getId(), address.getAddressDetails()))
+                .toList();
     }
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")

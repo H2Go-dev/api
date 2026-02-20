@@ -54,6 +54,7 @@ public class ProviderService {
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN')")
     public Page<ProviderRetrievalResponse> getProviders(Integer page, Integer size) {
         if (page == null || size == null || size <= 0 || page < 0 || size > 100) {
             throw new ApiException("invalid page or size parameter", HttpStatus.BAD_REQUEST);
