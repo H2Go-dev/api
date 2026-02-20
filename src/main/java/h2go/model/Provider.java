@@ -27,13 +27,13 @@ public class Provider {
     @Column(nullable = false)
     private String businessName;
 
-    @OneToMany(mappedBy = "provider")
+    @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
     private List<Subscription> subscriptions;
 
-    @OneToMany(mappedBy = "provider")
+    @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
     private List<Order> orders;
 
-    @OneToMany(mappedBy = "provider")
+    @OneToMany(mappedBy = "provider", fetch = FetchType.LAZY)
     private List<Product> products;
 
     @Column(nullable = false)

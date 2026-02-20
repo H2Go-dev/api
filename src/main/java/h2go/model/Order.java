@@ -29,7 +29,7 @@ public class Order {
     @ManyToOne(fetch = FetchType.LAZY)
     private Provider provider;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
     private List<OrderItem> orderItems;
 
     @Enumerated(EnumType.STRING)
@@ -38,7 +38,6 @@ public class Order {
     private Double totalPrice;
 
     @Enumerated(EnumType.STRING)
-    // TODO don't forget to do the db trigger to make the other orders do it
     private OrderType orderType;
 
     private String rejectionReason;

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +17,7 @@ public class AdminService {
 
     private final ProviderRepository providerRepository;
 
+    @Transactional
     public void approveProvider(String id, boolean approve) {
         Provider provider = providerRepository.findByIdAndDeletedAtIsNull(id)
                         . orElseThrow(() -> new ApiException("Provider not found", HttpStatus.NOT_FOUND));

@@ -19,11 +19,11 @@ public class Product {
     @NotNull(message = "name can't be null")
     private String name;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "provider_id")
     private Provider provider;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     private List<OrderItem> orderItems;
 
     @DecimalMin(value = "0.1", message = "price can't be zero or negative")

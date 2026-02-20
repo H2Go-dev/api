@@ -60,6 +60,10 @@ public class SubscriptionService {
             throw new  ApiException("provider not approved", HttpStatus.BAD_REQUEST);
         }
 
+        if (subscriptionRepository.findByUserIdAndProviderIdAndDeletedAtIsNull(user.getId(), providerId).isPresent()){
+            throw new ApiException("user already subscribed to provider", HttpStatus.BAD_REQUEST);
+        }
+
         Subscription subscription = new Subscription();
         subscription.setProvider(provider);
         subscription.setUser(user);
@@ -69,6 +73,7 @@ public class SubscriptionService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'PROVIDER')")
+    @Transactional
     public SubscriptionRetrievalResponse approveSubscription(
             String email,
             String subscriptionId,

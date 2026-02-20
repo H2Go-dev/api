@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class AddressService {
     private final UserRepository userRepository;
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @Transactional
     public AddressRetrievalResponse addAddress(String email, AddressRequest address) {
 
         User user =  userRepository.findByEmailAndDeletedAtIsNull(email)
@@ -48,6 +50,7 @@ public class AddressService {
     }
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @Transactional
     public AddressRetrievalResponse updateAddress(String email, String addressId, AddressRequest addressDetails) {
         Address address = addressRepository.findByIdAndDeletedAtIsNull(addressId)
                 .orElseThrow( () -> new ApiException("address not found", HttpStatus.NOT_FOUND));

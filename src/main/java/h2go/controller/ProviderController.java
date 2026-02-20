@@ -18,13 +18,12 @@ public class ProviderController {
     private final ProviderService providerService;
 
     @GetMapping
-    //TODO add all the filters deleted and others
     public Page<ProviderRetrievalResponse> providers(
             @RequestParam(defaultValue = "0")
             Integer page,
             @RequestParam(defaultValue = "20")
             Integer size
     ) {
-        return providerService.getProviders(page, size);
+        return providerService.getApprovedProviders(page, size);
     }
 }

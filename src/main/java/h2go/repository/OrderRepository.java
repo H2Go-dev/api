@@ -1,6 +1,8 @@
 package h2go.repository;
 
 import h2go.model.Order;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -9,9 +11,11 @@ import java.util.Optional;
 public interface OrderRepository extends JpaRepository<Order, String> {
     Optional<Order> findByIdAndDeletedAtIsNull(String id);
 
-    List<Order> findByUserIdAndDeletedAtIsNull(String userId);
+    Page<Order> findByUserIdAndDeletedAtIsNull(String userId, Pageable pageable);
 
-    List<Order> findByProviderIdAndDeletedAtIsNull(String providerId);
 
-    List<Order> findByDeletedAtIsNull();
+    Page<Order> findByProviderIdAndDeletedAtIsNull(String providerId, Pageable pageable);
+
+
+    Page<Order> findByDeletedAtIsNull(Pageable pageable);
 }

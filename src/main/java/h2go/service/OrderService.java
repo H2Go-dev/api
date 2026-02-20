@@ -25,6 +25,8 @@ import h2go.repository.ProviderRepository;
 import h2go.repository.SubscriptionRepository;
 import h2go.repository.UserRepository;
 import h2go.util.ErrorMessages;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -75,7 +77,7 @@ public class OrderService {
             throw new ApiException("address doesn't exist with user", HttpStatus.BAD_REQUEST);
         }
 
-        Subscription subscription = subscriptionRepository.findByUserIdAndProviderId(user.getId(), provider.getId())
+        Subscription subscription = subscriptionRepository.findByUserIdAndProviderIdAndDeletedAtIsNull(user.getId(), provider.getId())
                 .orElseThrow(() -> new ApiException("User not subscribed to provider", HttpStatus.NOT_FOUND));
 
         if (!subscription.getSubscriptionStatus().equals(SubscriptionStatus.APPROVED)) {
@@ -87,7 +89,7 @@ public class OrderService {
         List<OrderItem> orderItemList = orderCreationRequest.products().stream().map(
                 (e) -> {
 
-                    Product product = productRepository.findByIdAndDeletedAtIsNull(e.productId())
+                    Product product = productRepository.findByIdWithLock(e.productId())
                             .orElseThrow(() -> new ApiException(ErrorMessages.PRODUCT_NOT_FOUND, HttpStatus.NOT_FOUND));
 
                     if (!product.getProvider().getId().equals(provider.getId())) {
@@ -127,7 +129,6 @@ public class OrderService {
 
         orderItemList.forEach(item -> item.setOrder(order));
 
-        // TODO don't forget to set the delivery date when approving in the order
         orderRepository.save(order);
         productRepository.saveAll(productsToUpdate);
         orderItemRepository.saveAll(orderItemList);
@@ -138,23 +139,24 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     @PreAuthorize("isAuthenticated()")
-    public List<OrderResponse> getMyOrders(String email) {
+    public Page<OrderResponse> getMyOrders(String email, Integer page, Integer size) {
         User user = userRepository.findByEmailAndDeletedAtIsNull(email)
                 .orElseThrow(() -> new ApiException(ErrorMessages.USER_NOT_FOUND, HttpStatus.NOT_FOUND));
 
-        List<Order> orders;
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<Order> orders;
 
-       if (user.getRole() == Role.USER) {
-            orders = orderRepository.findByUserIdAndDeletedAtIsNull(user.getId());
-        } else if (user.getRole() == Role.PROVIDER) {
+        if (user.getRole().equals(Role.USER)) {
+            orders = orderRepository.findByUserIdAndDeletedAtIsNull(user.getId(), pageRequest);
+        } else if (user.getRole().equals(Role.PROVIDER)) {
             Provider provider = providerRepository.findByIdAndDeletedAtIsNull(user.getId())
                     .orElseThrow(() -> new ApiException(ErrorMessages.PROVIDER_NOT_FOUND, HttpStatus.NOT_FOUND));
-            orders = orderRepository.findByProviderIdAndDeletedAtIsNull(provider.getId());
+            orders = orderRepository.findByProviderIdAndDeletedAtIsNull(provider.getId(), pageRequest);
         } else {
-            orders = orderRepository.findByDeletedAtIsNull();
+            orders = orderRepository.findByDeletedAtIsNull(pageRequest);
         }
 
-        return orders.stream().map(orderMapper::toDto).toList();
+        return orders.map(orderMapper::toDto);
     }
 
     @Transactional
@@ -167,6 +169,10 @@ public class OrderService {
                 .orElseThrow(() -> new ApiException("Order not found", HttpStatus.NOT_FOUND));
 
         ensureCanManageOrder(actor, order);
+
+        if (order.getOrderStatus() != OrderStatus.PENDING) {
+            throw new ApiException("Order has already been processed", HttpStatus.BAD_REQUEST);
+        }
 
         order.setOrderStatus(approveOrderRequest.approved() ?  OrderStatus.APPROVED : OrderStatus.REJECTED);
         order.setDeliveryDate(approveOrderRequest.deliveryDate());
@@ -195,22 +201,35 @@ public class OrderService {
 
         ensureCanManageOrder(actor, order);
 
-        if (order.getOrderStatus() == OrderStatus.PENDING) {
+        if (order.getOrderStatus().equals(OrderStatus.PENDING)) {
             throw new  ApiException("order hasn't been approved to be delivered", HttpStatus.BAD_REQUEST);
+        }
+
+        if (order.getOrderStatus().equals(OrderStatus.CANCELLED)) {
+            throw new ApiException("order has been cancelled", HttpStatus.BAD_REQUEST);
         }
 
         if (order.getOrderStatus().equals(OrderStatus.REJECTED)) {
             throw new  ApiException("order is rejected", HttpStatus.BAD_REQUEST);
         }
 
+        if (changeOrderStatusRequest.orderStatus().equals(OrderStatus.CANCELLED)) {
+            throw  new  ApiException("use the cancellation endpoint for cancelling", HttpStatus.BAD_REQUEST);
+        }
+
+        if (changeOrderStatusRequest.orderStatus().equals(OrderStatus.APPROVED)) {
+            throw  new  ApiException("use the approval endpoint for approval", HttpStatus.BAD_REQUEST);
+        }
+
         order.setOrderStatus(changeOrderStatusRequest.orderStatus());
+
         orderRepository.save(order);
 
         return orderMapper.toDto(order);
     }
 
     private void ensureCanManageOrder(User user, Order order) {
-        if (user.getRole() == Role.ADMIN) {
+        if (user.getRole().equals(Role.ADMIN)) {
             return;
         }
         String providerOwnerEmail = order.getProvider().getUser().getEmail();
@@ -228,21 +247,30 @@ public class OrderService {
         Order order = orderRepository.findByIdAndDeletedAtIsNull(orderId)
                 .orElseThrow(() -> new ApiException("Order not found", HttpStatus.NOT_FOUND));
 
-        if (order.getOrderStatus() == OrderStatus.CANCELLED) {
+        if (order.getOrderStatus().equals(OrderStatus.CANCELLED)) {
             throw new ApiException("Order is already cancelled", HttpStatus.BAD_REQUEST);
         }
 
-        if (order.getOrderStatus() == OrderStatus.DELIVERED) {
+        if (order.getOrderStatus().equals(OrderStatus.DELIVERED)) {
             throw new ApiException("Cannot cancel a delivered order", HttpStatus.BAD_REQUEST);
         }
 
         boolean isOwner = order.getUser().getEmail().equals(email);
-        boolean isProvider = actor.getRole() == Role.PROVIDER && order.getProvider().getUser().getEmail().equals(email);
-        boolean isAdmin = actor.getRole() == Role.ADMIN;
+        boolean isProvider = actor.getRole().equals(Role.PROVIDER) && order.getProvider().getUser().getEmail().equals(email);
 
-        if (!isOwner && !isProvider && !isAdmin) {
+        if (!isOwner && !isProvider ) {
             throw new ApiException(ErrorMessages.UNAUTHORIZED_ACTION, HttpStatus.FORBIDDEN);
         }
+
+        List<Product> productsToUpdate = new ArrayList<>();
+
+        order.getOrderItems().forEach(item -> {
+            Product product = item.getProduct();
+            product.setStock(product.getStock() + item.getQuantity());
+            productsToUpdate.add(product);
+        });
+
+        productRepository.saveAll(productsToUpdate);
 
         order.setOrderStatus(OrderStatus.CANCELLED);
         orderRepository.save(order);

@@ -7,13 +7,12 @@ import h2go.dto.response.OrderResponse;
 import h2go.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -22,8 +21,12 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping
-    public List<OrderResponse> getMyOrders(@AuthenticationPrincipal UserDetails userDetails) {
-        return orderService.getMyOrders(userDetails.getUsername());
+    public Page<OrderResponse> getMyOrders(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "20") Integer size
+    ) {
+        return orderService.getMyOrders(userDetails.getUsername(), page, size);
     }
 
     @PostMapping

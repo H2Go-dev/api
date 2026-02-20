@@ -83,7 +83,6 @@ public class UserService {
     public UserRetrievalResponse getUserProfile(String email) {
         User user = userRepository.findByEmailAndDeletedAtIsNull(email)
                 .orElseThrow( () -> new ApiException("User not found", HttpStatus.NOT_FOUND));
-        // TODO: to add the order details and history when orders are implemented
         return userMapper.toDto(user);
     }
 

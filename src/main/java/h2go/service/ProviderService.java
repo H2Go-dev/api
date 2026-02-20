@@ -53,13 +53,22 @@ public class ProviderService {
 
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @Transactional(readOnly = true)
     public Page<ProviderRetrievalResponse> getProviders(Integer page, Integer size) {
         if (page == null || size == null || size <= 0 || page < 0 || size > 100) {
             throw new ApiException("invalid page or size parameter", HttpStatus.BAD_REQUEST);
         }
         return providerRepository.findAllByDeletedAtIsNullOrderByIdAsc(PageRequest.of(page, size))
+                .map(providerMapper::toDto);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ProviderRetrievalResponse> getApprovedProviders(Integer page, Integer size) {
+        if (page == null || size == null || size <= 0 || page < 0 || size > 100) {
+            throw new ApiException("invalid page or size parameter", HttpStatus.BAD_REQUEST);
+        }
+        return providerRepository.findByRegistrationStatusAndDeletedAtIsNull(
+                        RegistrationStatus.APPROVED, PageRequest.of(page, size))
                 .map(providerMapper::toDto);
     }
 }
