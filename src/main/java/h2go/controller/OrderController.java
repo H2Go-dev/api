@@ -53,4 +53,13 @@ public class OrderController {
     ) {
         return orderService.changeOrderStatus(userDetails.getUsername(), orderId, changeOrderStatusRequest);
     }
+
+    @PutMapping("/cancel/{orderId}")
+    public ResponseEntity<String> cancelOrder(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable String orderId
+    ) {
+        String responseMessage = orderService.cancelOrder(userDetails.getUsername(), orderId);
+        return ResponseEntity.ok(responseMessage);
+    }
 }

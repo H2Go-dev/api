@@ -220,4 +220,34 @@ public class OrderService {
         }
     }
 
+    @Transactional
+    public String cancelOrder(String email, String orderId) {
+        User actor = userRepository.findByEmailAndDeletedAtIsNull(email)
+                .orElseThrow(() -> new ApiException("User not found", HttpStatus.UNAUTHORIZED));
+
+        Order order = orderRepository.findByIdAndDeletedAtIsNull(orderId)
+                .orElseThrow(() -> new ApiException("Order not found", HttpStatus.NOT_FOUND));
+
+        if (order.getOrderStatus() == OrderStatus.CANCELLED) {
+            throw new ApiException("Order is already cancelled", HttpStatus.BAD_REQUEST);
+        }
+
+        if (order.getOrderStatus() == OrderStatus.DELIVERED) {
+            throw new ApiException("Cannot cancel a delivered order", HttpStatus.BAD_REQUEST);
+        }
+
+        boolean isOwner = order.getUser().getEmail().equals(email);
+        boolean isProvider = actor.getRole() == Role.PROVIDER && order.getProvider().getUser().getEmail().equals(email);
+        boolean isAdmin = actor.getRole() == Role.ADMIN;
+
+        if (!isOwner && !isProvider && !isAdmin) {
+            throw new ApiException(ErrorMessages.UNAUTHORIZED_ACTION, HttpStatus.FORBIDDEN);
+        }
+
+        order.setOrderStatus(OrderStatus.CANCELLED);
+        orderRepository.save(order);
+
+        return "Order Cancelled Successfully";
+    }
+
 }
